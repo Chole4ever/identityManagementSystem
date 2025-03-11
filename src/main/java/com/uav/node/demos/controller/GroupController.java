@@ -90,20 +90,6 @@ public class GroupController {
         return ResponseEntity.ok(response);
     }
 
-    //did、gdid、服务列表信息
-    //gdidCreation
-    @PostMapping("/GDIDCreation")
-    public ResponseEntity<Map<String, String>> GDIDCreation(@RequestBody GDDO gddo) throws Exception {
-        gdidService.launchGDIDGeneration(gddo);
-        Map<String, String> response = new HashMap<>();
-        response.put("Function","GDIDCreation");
-        response.put("Status","success");
-        response.put("GDDO", String.valueOf(gddo));
-
-        //response.put("Transaction", );
-        return ResponseEntity.ok(response);
-
-    }
     @GetMapping("/g2")
     public ResponseEntity<Map<String, String>> g2() throws Exception {
 

@@ -3,6 +3,7 @@ package com.uav.node.demos.controller;
 
 import com.uav.node.demos.config.FiscoBcos;
 import com.uav.node.demos.contract.HelloWorld;
+import com.uav.node.demos.model.GDDO;
 import com.uav.node.demos.model.Message;
 import com.uav.node.demos.network.UDPClient;
 import com.uav.node.demos.service.*;
@@ -69,9 +70,7 @@ public class TestController {
     UDPClient udpClient;
     @GetMapping("/test")
     public ResponseEntity<String> test() throws Exception {
-        Message m = new Message(0,"hh");
-        udpClient.send(m,1);
-
+        gdidService.launchGDIDGeneration();
         return ResponseEntity.ok("hello world!");
     }
 
@@ -86,6 +85,7 @@ public class TestController {
         return ResponseEntity.ok(response);
 
     }
+
 
 
 

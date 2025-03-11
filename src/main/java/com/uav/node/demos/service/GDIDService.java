@@ -18,16 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-
-
 
 @Service
 public class GDIDService {
@@ -45,7 +40,7 @@ public class GDIDService {
     CryptoBean cryptoBean;
     Logger logger = LoggerFactory.getLogger(GDIDService.class);
 
-    public void launchGDIDGeneration(GDDO gddo) throws Exception {
+    public void launchGDIDGeneration() throws Exception {
         logger.info("node "+config.getOwnerId()+" launches GDIDGeneration...");
         Message message = new Message(config.getOwnerId(),"Launch_GDID_Generation");
         transportService.sendBroadcastMessage(message);
@@ -146,7 +141,7 @@ public class GDIDService {
         {
             BIG share = dkgService.getSharesById(peerId.get(i));
             Message message = new Message(config.getOwnerId(),"SEND_SUB_KEY_SHARED",bigToBytes(share));
-            transportService.sendUDPMessage(message,config.getLeaderId());
+            transportService.sendUDPMessage(message,i);
         }
     }
 
