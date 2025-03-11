@@ -1,11 +1,8 @@
 package com.uav.node.demos.controller;
 
-import com.sun.org.apache.xpath.internal.operations.Gt;
 import com.uav.node.demos.config.FiscoBcos;
 import com.uav.node.demos.contract.GDIDRegistry;
-import com.uav.node.demos.model.DDO;
 import com.uav.node.demos.model.GDDO;
-import com.uav.node.demos.model.Gto;
 import com.uav.node.demos.service.GDIDService;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
@@ -16,8 +13,6 @@ import org.fisco.bcos.sdk.v3.transaction.manager.TransactionProcessorFactory;
 import org.fisco.bcos.sdk.v3.transaction.model.dto.TransactionResponse;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionBaseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

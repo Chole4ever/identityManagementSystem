@@ -1,4 +1,4 @@
-package com.uav.node.demos.network.udp;
+package com.uav.node.demos.network;
 
 import com.uav.node.demos.config.GlobalConfig;
 import com.uav.node.demos.model.Message;
@@ -20,8 +20,7 @@ public class UDPClient {
         socket.setBroadcast(true);
         InetAddress address = InetAddress.getByName("255.255.255.255");
         byte[] data = message.toByteArray();
-//        DatagramPacket packet = new DatagramPacket(
-//                data, data.length, address, 44444);
+
         DatagramPacket packet1 = new DatagramPacket(
                 data, data.length, address, 44444);
         DatagramPacket packet2 = new DatagramPacket(
@@ -44,8 +43,7 @@ public class UDPClient {
 
         InetAddress address = new InetSocketAddress(host,port).getAddress();
         byte[] data = message.toByteArray();
-//        DatagramPacket packet = new DatagramPacket(
-//                data, data.length, address, 44444);
+
         DatagramPacket packet = new DatagramPacket(
                 data, data.length, address, config.getPeerudpPorts().get(toId));
 

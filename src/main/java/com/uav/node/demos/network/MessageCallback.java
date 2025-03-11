@@ -1,4 +1,4 @@
-package com.uav.node.demos.network.udp;
+package com.uav.node.demos.network;
 
 import java.net.InetAddress;
 

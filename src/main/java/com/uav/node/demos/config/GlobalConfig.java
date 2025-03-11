@@ -31,6 +31,7 @@ public class GlobalConfig {
     GDDO gddo;
 
 
+
     @Bean
     public GlobalConfig getConfig()
     {

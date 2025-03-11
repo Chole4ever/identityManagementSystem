@@ -1,6 +1,5 @@
 package com.uav.node.demos.config;
 
-
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.BcosSDK;

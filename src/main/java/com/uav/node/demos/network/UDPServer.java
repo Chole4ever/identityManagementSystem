@@ -1,7 +1,6 @@
-package com.uav.node.demos.network.udp;
+package com.uav.node.demos.network;
 
 import com.uav.node.demos.config.GlobalConfig;
-import com.uav.node.demos.service.TransportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +29,22 @@ public class UDPServer {
     @PostConstruct
     public void startServer() {
 
-        DatagramSocket socket = null;
-        DatagramSocket socket2 = null;
+        DatagramSocket broadSocket ;
+        DatagramSocket p2pSocket ;
         try {
-            socket = new DatagramSocket(44444);
-            socket2 = new DatagramSocket(config.getPeerudpPorts().get(config.getOwnerId()));
+            broadSocket = new DatagramSocket(config.getBroadcastPort());
+            p2pSocket = new DatagramSocket(config.getPeerudpPorts().get(config.getOwnerId()));
         } catch (SocketException e) {
             throw new RuntimeException(e);
         }
-        logger.info("node "+config.getOwnerId()+" 服务端监听中（广播端口 44444）...");
+
+        logger.info("node "+config.getOwnerId()+" 服务端监听中（广播端口 {}}）...",config.getBroadcastPort());
         logger.info("node "+config.getOwnerId()+" 服务端监听中（udp接收端口 {}）...",config.getPeerudpPorts().get(config.getOwnerId()));
 
-        // 创建一个单独的线程处理数据接收
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-        DatagramSocket finalSocket = socket;
+        DatagramSocket finalSocket = broadSocket;
 
-        DatagramSocket finalSocket2 = socket2;
+        DatagramSocket finalSocket2 = p2pSocket;
         executorService.submit(() -> {
             byte[] buffer = new byte[2048];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -84,7 +83,7 @@ public class UDPServer {
                         // 可以选择丢弃或者分块处理
                         continue;
                     }
-                    // 调用回调方法处理接收到的消息
+
                     callback.onMessageReceived(msg, packet.getAddress());
                 } catch (IOException e) {
                     e.printStackTrace();

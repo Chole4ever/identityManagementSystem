@@ -52,9 +52,9 @@ public class DKGService {
         }
         cryptoBean.setPrivateCoeffs(privateCoeffs);
         cryptoBean.setPublicCoeffs(publicCoeffs);
-//        logger.info("node: "+config.getOwnerId()+" generatePolynomial ");
-//        logger.info("node: "+config.getOwnerId()+" privateCoeffs: "+ Arrays.toString(privateCoeffs));
-//        logger.info("node: "+config.getOwnerId()+" publicCoeffs: "+ Arrays.toString(publicCoeffs));
+        logger.info("node: "+config.getOwnerId()+" generatePolynomial ");
+        logger.info("node: "+config.getOwnerId()+" privateCoeffs: "+ Arrays.toString(privateCoeffs));
+        logger.info("node: "+config.getOwnerId()+" publicCoeffs: "+ Arrays.toString(publicCoeffs));
     }
 
     // 2. 发送份额给其他参与者
@@ -100,9 +100,7 @@ public class DKGService {
         return sig_i;
 
     }
-    // 辅助方法：哈希消息到G1群（简化的示例，实际需使用标准化哈希到曲线）
     public static ECP hashToG1(byte[] message) {
-        // 使用SHA-384生成48字节哈希
         byte[] hash = new byte[48];
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-384");
@@ -111,7 +109,6 @@ public class DKGService {
             throw new RuntimeException("Hash failed");
         }
 
-        // 调用mapit方法生成曲线点
         return ECP.mapit(hash);
     }
 }

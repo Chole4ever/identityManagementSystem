@@ -8,7 +8,7 @@ import java.util.List;
 public class Node {
     private String did;
     private String gdid;
-    private int isLeader;//0 no 1 yes
+    private int isLeader;
     private List<String> publicKeys;
     private List<String > serviceList;
 

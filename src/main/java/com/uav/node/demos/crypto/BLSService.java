@@ -33,10 +33,8 @@ public class BLSService {
         n=config.getCount();
     }
     public ECP aggregatedSignatures(HashMap<Integer, ECP> partialSigs) {
-        // 4. 计算Lagrange系数并聚合签名
         ECP aggregatedSig = new ECP();
         aggregatedSig.inf();
         return new ECP();
-
     }
 }
