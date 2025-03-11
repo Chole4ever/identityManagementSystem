@@ -52,9 +52,11 @@ public class DKGService {
         }
         cryptoBean.setPrivateCoeffs(privateCoeffs);
         cryptoBean.setPublicCoeffs(publicCoeffs);
-        logger.info("node: "+config.getOwnerId()+" generatePolynomial ");
-        logger.info("node: "+config.getOwnerId()+" privateCoeffs: "+ Arrays.toString(privateCoeffs));
-        logger.info("node: "+config.getOwnerId()+" publicCoeffs: "+ Arrays.toString(publicCoeffs));
+        logger.info("-----------------------------------------------------------------------");
+        logger.info("node "+config.getOwnerId()+" generatePolynomial ");
+        logger.info("node "+config.getOwnerId()+" privateCoeffs: "+ Arrays.toString(privateCoeffs));
+        logger.info("node "+config.getOwnerId()+" publicCoeffs: "+ Arrays.toString(publicCoeffs));
+        logger.info("-----------------------------------------------------------------------");
     }
 
     // 2. 发送份额给其他参与者

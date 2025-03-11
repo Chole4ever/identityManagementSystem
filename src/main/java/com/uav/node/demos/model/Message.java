@@ -37,8 +37,7 @@ public class Message{
 
     public String toGood()
     {
-        return "from: "+fromId+
-                   "  command: "+command+
+        return "  command: "+command+
                     " value: "+ Arrays.toString(value);
     }
 

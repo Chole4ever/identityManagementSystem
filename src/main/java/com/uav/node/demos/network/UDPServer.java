@@ -80,7 +80,6 @@ public class UDPServer {
                     int length = packet.getLength();
                     if (length > buffer.length) {
                         logger.error("Received packet exceeds buffer size: " + length);
-                        // 可以选择丢弃或者分块处理
                         continue;
                     }
 

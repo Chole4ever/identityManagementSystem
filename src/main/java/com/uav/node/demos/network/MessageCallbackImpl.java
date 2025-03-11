@@ -22,7 +22,7 @@ public class MessageCallbackImpl implements MessageCallback {
     public void onMessageReceived(String m, InetAddress address) throws Exception {
 
         Message message =  Message.fromByteArray(m.getBytes());
-        logger.info("node "+config.getOwnerId()+" received message "+message.getCommand()+" from "+message.getFromId());
+        logger.info("node "+config.getOwnerId()+" received message from "+message.toGood());
         messageService.processMessage(message);
 
     }
