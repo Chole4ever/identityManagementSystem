@@ -1,11 +1,15 @@
-package com.example.uav.controller;
+package com.uav.node.demos.controller;
 
 
-import com.example.uav.config.FiscoBcos;
-import com.example.uav.contract.DIDRegistry;
-import com.example.uav.crypto.Secp256k;
-import com.example.uav.model.Node;
-import com.example.uav.service.GDIDService;
+
+import com.uav.node.demos.config.FiscoBcos;
+import com.uav.node.demos.contract.DIDRegistry;
+import com.uav.node.demos.contract.GDIDRegistry;
+import com.uav.node.demos.crypto.Secp256k;
+import com.uav.node.demos.model.DDO;
+import com.uav.node.demos.model.Node;
+import com.uav.node.demos.service.GDIDService;
+import lombok.Getter;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.ContractCodecException;
@@ -24,15 +28,30 @@ import org.web3j.crypto.ECKeyPair;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ClientController {
-    @Value("${UAV.didRegistryContractAddress}")
-    private  String didRegistryContractAddress;
+    private BcosSDK sdk;
+    private Client client;
+    private CryptoKeyPair cryptoKeyPair;
 
-    @Autowired
-    FiscoBcos fiscoBcos;
+    private AssembleTransactionProcessor transactionProcessor;
+    public ClientController(FiscoBcos fiscoBcos) throws IOException {
+        sdk =  fiscoBcos.getBcosSDK();
+        client = sdk.getClient("group0");
+        cryptoKeyPair = client.getCryptoSuite().getCryptoKeyPair();
+         transactionProcessor =
+                TransactionProcessorFactory.createAssembleTransactionProcessor
+                        (client, cryptoKeyPair,
+                                "src/main/resources/abi/DIDRegistry.abi",
+                                "src/main/resources/bin/DIDRegistry.bin");
+    }
+    @Value("${uav.didRegistryContractAddress}")
+    private  String didRegistryContractAddress;
 
     @Autowired
     GDIDService gdidService;
@@ -67,37 +86,46 @@ public class ClientController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/deployDIDRegistry")
-    public ResponseEntity<Map<String, String>> deployDIDRegistry() throws ContractException {
-        BcosSDK sdk =  fiscoBcos.getBcosSDK();
-        // 为群组group初始化client
-        Client client = sdk.getClient("group0");
 
-        CryptoKeyPair cryptoKeyPair = client.getCryptoSuite().getCryptoKeyPair();
 
-        DIDRegistry didRegistry = DIDRegistry.deploy(client, cryptoKeyPair);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("Contract",didRegistry.getContractAddress());
-        response.put("blockNumber", String.valueOf(client.getBlockNumber()));
-        response.put("Message","deployDIDRegistry");
+    @PostMapping("/findDID")
+    public ResponseEntity<Map<String, String>> findDID( @RequestParam("did") String did) throws IOException, TransactionBaseException, ContractCodecException {
 
+        // 创建调用交易函数的参数
+        //string memory did, string[] memory publicKeys, string[] memory serviceList
+        List<Object> params = new ArrayList<>();
+        params.add(did);
+
+        // 调用HelloWorld合约，合约地址为helloWorldAddress， 调用函数名为『set』，函数参数类型为params
+        TransactionResponse transactionResponse =
+                transactionProcessor.sendTransactionAndGetResponseByContractLoader(
+                        "DIDRegistry",
+                        didRegistryContractAddress,
+                        "getDIDDocument",
+                        params);
+
+        List<Object> list =  transactionResponse.getReturnObject();
+
+        // 假设你有一个结构化的 Map 或自定义类
+        Map<String, String > response = new HashMap<>();
+
+        response.put("Function", "findDID");
+        response.put("DID", (String) list.get(0));
+        response.put("GDID", (String) list.get(1));
+        response.put("PublicKeys", String.valueOf(list.get(2)));
+        response.put("ServerLists", String.valueOf(list.get(3)));
+        response.put("Created", "1739887691");
+        response.put("Updated", "1739978293");
+//        dto dto = new dto("findDID",list);
+//        response.put("function","findDID");
+//        response.put("info",dto.toString());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/registerDID")
     public ResponseEntity<Map<String, String>> registerDID(@RequestBody Node node) throws IOException, TransactionBaseException, ContractCodecException {
-        BcosSDK sdk =  fiscoBcos.getBcosSDK();
-        Client client = sdk.getClient("group0");
 
-        CryptoKeyPair cryptoKeyPair = client.getCryptoSuite().getCryptoKeyPair();
-        AssembleTransactionProcessor transactionProcessor =
-                TransactionProcessorFactory.createAssembleTransactionProcessor
-                        (client, cryptoKeyPair,
-                                "src/main/resources/abi/DIDRegistry.abi",
-                                "src/main/resources/bin/DIDRegistry.bin");
-        // 创建调用交易函数的参数
-        //string memory did, string[] memory publicKeys, string[] memory serviceList
         List<Object> params = new ArrayList<>();
         params.add(node.getDid());
         params.add(node.getPublicKeys());
@@ -110,29 +138,49 @@ public class ClientController {
                         "registerDID",
                         params);
         Map<String, String> response = new HashMap<>();
-        response.put("Message","registerDID");
+        response.put("Function","registerDID");
+        response.put("Status","success");
         response.put("transactionResponse",transactionResponse.getEvents());
         response.put("info",transactionResponse.toString());
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/registerGDID")
-    public ResponseEntity<String> registerGDID(@RequestBody Node node) throws Exception {
-        if(node.isLeader())
-        {
-           // gdidService.LaunchGDIDGeneration();
-        }else{
-            return ResponseEntity.ok("非领导节点，无法发起GDID生成！");
-        }
-        return ResponseEntity.ok("GDID注册成功");
-    }
 
     @PostMapping("/groupAuthentication")
     public ResponseEntity<String> groupAuthentication(@RequestBody Node node) {
         // 逻辑处理：群组认证
-
         return ResponseEntity.ok("群组认证成功");
     }
+
+    @PostMapping("/updateDDO")
+    public ResponseEntity<Map<String, String>> updateDDO(@RequestBody DDO ddo) throws IOException, TransactionBaseException, ContractCodecException {
+
+        //string memory did, string[] memory publicKeys, string[] memory serviceList
+        List<Object> params = new ArrayList<>();
+        //string memory did, string memory gdid_,string[] memory publicKeys_,string[] memory serviceList_) public {
+        //
+        params.add(ddo.getDid());
+        if(ddo.getGdid()!=null)
+            params.add(ddo.getGdid());
+        params.add(ddo.getPublicKeys());
+        params.add(ddo.getServiceList());
+        // 调用HelloWorld合约，合约地址为helloWorldAddress， 调用函数名为『set』，函数参数类型为params
+        TransactionResponse transactionResponse =
+                transactionProcessor.sendTransactionAndGetResponseByContractLoader(
+                        "DIDRegistry",
+                        didRegistryContractAddress,
+                        "updateDIDDocument",
+                        params);
+        Map<String, String> response = new HashMap<>();
+        response.put("Function","updateDDO");
+        response.put("Status","success");
+        response.put("transactionResponse",transactionResponse.getEvents());
+        response.put("info",transactionResponse.toString());
+
+        return ResponseEntity.ok(response);
+    }
+
+
 
 
 

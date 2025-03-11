@@ -1,16 +1,14 @@
-package com.example.uav.model;
+package com.uav.node.demos.model;
 
 import lombok.Data;
-import org.springframework.context.annotation.Bean;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 
 @Data
 public class Node {
     private String did;
     private String gdid;
-    private boolean isLeader = false;
+    private int isLeader;//0 no 1 yes
     private List<String> publicKeys;
     private List<String > serviceList;
 

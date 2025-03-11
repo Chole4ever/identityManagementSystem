@@ -1,4 +1,4 @@
-package com.example.uav.contract;
+package com.uav.node.demos.contract;
 
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.datatypes.Function;

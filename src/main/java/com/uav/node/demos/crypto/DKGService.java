@@ -1,104 +1,118 @@
 package com.uav.node.demos.crypto;
 
+import com.uav.node.demos.config.CryptoBean;
+import com.uav.node.demos.config.GlobalConfig;
+import org.apache.milagro.amcl.BLS381.BIG;
+import org.apache.milagro.amcl.BLS381.ECP;
+import org.apache.milagro.amcl.BLS381.ECP2;
+import org.apache.milagro.amcl.BLS381.ROM;
+import org.apache.milagro.amcl.RAND;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
-
-import com.uav.node.demos.model.Message;
-
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.ArrayList;
+import javax.annotation.PostConstruct;
+import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.List;
 
-public class DKG {
-    private int threshold;
-    private int n;
+@Service
+public class DKGService {
+    @Qualifier("getConfig")
+    @Autowired
+    GlobalConfig config;
+    @Autowired
+    CryptoBean cryptoBean;
+    @Autowired
+    BLSService blsService;
+    Logger logger = LoggerFactory.getLogger(DKGService.class);
+    private static final ECP2 G2_GENERATOR = ECP2.generator();  // G2群的生成元
+    private static final BIG q = new BIG(ROM.CURVE_Order);
+    private  int t;
+    private  int n;
 
-    private BigInteger sk;
-    private List<BigInteger> A_values;
-    private List<BigInteger> S_values;
-    private List<BigInteger> coefficients;
-
-    static final BigInteger q = new BigInteger("123456789"); // Modulus for the field
-    static final BigInteger p = new BigInteger("987654321"); // Prime modulus for group operations
-    static final BigInteger generator = new BigInteger("2"); // Generator value
-
-    public void initDKG(int t,int count) {
-        this.threshold = t;
-        this.n = count;
-
-        this.coefficients = new ArrayList<>();
-        this.A_values = new ArrayList<>();
-        this.S_values = new ArrayList<>();
-
-        this.coefficients = selectPolynomial();
-        this.A_values = computeAValues();
-        this.S_values = computeShares();
-
+    @PostConstruct
+    private void init()
+    {
+        t=config.getThreshold();
+        n=config.getCount();
     }
-    public List<BigInteger> CaculateSubSKShared(){return S_values;};
-    public BigInteger CaculateSubGPKShared(){
-        return A_values.get(0);
-    };
-    public List<BigInteger> selectPolynomial() {
-        SecureRandom random = new SecureRandom();
-        List<BigInteger> coff = new ArrayList<>();
-        for (int i = 0; i < threshold; i++) {
-            coff.add(new BigInteger(256, random).mod(p));
+
+    // 1. 生成随机多项式及承诺
+    public void generatePolynomial() {
+
+        BIG[] privateCoeffs  = new BIG[t+1];
+        ECP2[] publicCoeffs  = new ECP2[t+1];
+        RAND rng = new RAND();
+        for (int k=0; k<=t; k++) {
+            privateCoeffs[k] = BIG.randomnum(q, rng); // a_k ∈ Z_q
+            publicCoeffs[k] = G2_GENERATOR.mul(privateCoeffs[k]);   // A_k = a_k * G
         }
-        return coff;
+        cryptoBean.setPrivateCoeffs(privateCoeffs);
+        cryptoBean.setPublicCoeffs(publicCoeffs);
+//        logger.info("node: "+config.getOwnerId()+" generatePolynomial ");
+//        logger.info("node: "+config.getOwnerId()+" privateCoeffs: "+ Arrays.toString(privateCoeffs));
+//        logger.info("node: "+config.getOwnerId()+" publicCoeffs: "+ Arrays.toString(publicCoeffs));
     }
 
-    // Compute A_ik = g^a_ik mod p
-    public  List<BigInteger> computeAValues() {
-        List<BigInteger> A_values = new ArrayList<>();
-        for (BigInteger coeff : coefficients) {
-            A_values.add(modExp(generator, coeff, p));  // A_ik = g^a_ik mod p
+    // 2. 发送份额给其他参与者
+    public BIG getSharesById(int targetId) {
+        BIG share = new BIG(0);
+        for (int k=0; k<=t; k++) {
+            BIG j = new BIG(targetId); // 目标ID作为j
+            BIG term = j.powmod(new BIG(k), q);
+            term = BIG.modmul(cryptoBean.getPrivateCoeffs()[k], term, q);
+            share.add(term);
+            share.mod(q);
         }
-        return A_values;
+        return share;
     }
 
-    // Compute the shares s_ij = f_i(j) mod p
-    public  List<BigInteger> computeShares() {
-        List<BigInteger> shares = new ArrayList<>();
-        for (int j = 1; j <= n; j++) {
-            BigInteger share = evaluatePolynomial(BigInteger.valueOf(j));
-            shares.add(share);
+    public BIG computePrivateKey(List<BIG> shares ) {
+        BIG sk_i = new BIG(0);
+        for (BIG share : shares){
+            sk_i.add(share);
+            sk_i.mod(q);
         }
-        return shares;
+        cryptoBean.setSk_i(sk_i);
+        return sk_i;
+    }
+    public ECP2 computeGroupPublicKey(List<ECP2> publicCoeffs)
+    {
+        ECP2 groupPubKey = new ECP2();
+        groupPubKey.inf();
+        for (ECP2 p : publicCoeffs) {
+            groupPubKey.add(p);
+        }
+        groupPubKey.affine();
+        cryptoBean.setGroupPubKey(groupPubKey);
+        return groupPubKey;
     }
 
-    //f_i(j) mod p
-    private BigInteger evaluatePolynomial(BigInteger x) {
-        BigInteger result = BigInteger.ZERO;
-        for (int i = 0; i < coefficients.size(); i++) {
-            result = result.add(coefficients.get(i).multiply(x.pow(i)));
-        }
-        return result.mod(p);
-    }
+    public ECP signSig(byte[] metadata) {
+        ECP H_m = hashToG1(metadata);
+        H_m.affine();
+        ECP sig_i = new ECP(H_m);
+        sig_i = sig_i.mul(cryptoBean.getSk_i());  // 使用 sk_i 而不是 privateCoeffs[0]
+        sig_i.affine();
+        return sig_i;
 
-    public static BigInteger modExp(BigInteger base, BigInteger exp, BigInteger mod) {
-        return base.modPow(exp, mod);
     }
+    // 辅助方法：哈希消息到G1群（简化的示例，实际需使用标准化哈希到曲线）
+    public static ECP hashToG1(byte[] message) {
+        // 使用SHA-384生成48字节哈希
+        byte[] hash = new byte[48];
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-384");
+            hash = digest.digest(message);
+        } catch (Exception e) {
+            throw new RuntimeException("Hash failed");
+        }
 
-    public BigInteger CaculateSubKey(List<BigInteger> sValues) {
-        BigInteger x_j = BigInteger.ZERO;
-        for (BigInteger s_ij : sValues) {
-            x_j = x_j.add(s_ij).mod(q);
-        }
-        sk = x_j;
-        return x_j;
-    }
-    public BigInteger CaculateGPK(List<BigInteger> subPKShares) {
-        BigInteger pk = BigInteger.ZERO;
-        for(int i=0;i<subPKShares.size();i++)
-        {
-            pk.add(subPKShares.get(i)).mod(p);
-        }
-        return pk;
-    }
-    public BigInteger CaculateSubSignature(Message message) {
-        String pk = String.valueOf(message.getBigInteger());
-        return BLS.sign(sk,pk);
+        // 调用mapit方法生成曲线点
+        return ECP.mapit(hash);
     }
 }
 

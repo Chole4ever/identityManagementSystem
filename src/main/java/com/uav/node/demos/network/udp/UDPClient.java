@@ -1,32 +1,55 @@
-package com.uav.node;
+package com.uav.node.demos.network.udp;
 
+import com.uav.node.demos.config.GlobalConfig;
+import com.uav.node.demos.model.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 import java.net.*;
+import java.util.List;
 
+@Component
 public class UDPClient {
-    public static void main(String[] args) throws Exception {
-        // 创建UDP Socket
+    @Qualifier("getConfig")
+    @Autowired
+    GlobalConfig config;
+    public void Broadcast(Message message) throws Exception {
         DatagramSocket socket = new DatagramSocket();
-        socket.setBroadcast(true); // 关键：启用广播模式
-
-        // 构建广播消息
-        String message = "这是Java的广播测试消息";
-        byte[] data = message.getBytes();
-
-        // 使用回环广播地址（适用于单机测试）
+        socket.setBroadcast(true);
         InetAddress address = InetAddress.getByName("255.255.255.255");
-        // 也可以尝试用本地子网广播地址，如 192.168.1.255（需根据实际IP修改）
+        byte[] data = message.toByteArray();
+//        DatagramPacket packet = new DatagramPacket(
+//                data, data.length, address, 44444);
+        DatagramPacket packet1 = new DatagramPacket(
+                data, data.length, address, 44444);
+        DatagramPacket packet2 = new DatagramPacket(
+                data, data.length, address, 44445);
+        DatagramPacket packet3 = new DatagramPacket(
+                data, data.length, address, 44446);
+        socket.send(packet1);
+        socket.send(packet2);
+        socket.send(packet3);
+        socket.close();
+    }
 
-        // 发送数据包
+    public void send(Message message, int toId) throws IOException {
+        DatagramSocket socket = new DatagramSocket();
 
-        for (int i=0;i<10;i++)
-        {
-            DatagramPacket packet = new DatagramPacket(
-                    data, data.length, address, 44444
-            );
-            socket.send(packet);
-        }
-        System.out.println("广播消息已发送");
+        List<String> ip = config.getPeerIps();
+        List<Integer> peerPorts = config.getPeerudpPorts();
+        String host = ip.get(toId);
+        int port =peerPorts.get(toId);
 
+        InetAddress address = new InetSocketAddress(host,port).getAddress();
+        byte[] data = message.toByteArray();
+//        DatagramPacket packet = new DatagramPacket(
+//                data, data.length, address, 44444);
+        DatagramPacket packet = new DatagramPacket(
+                data, data.length, address, config.getPeerudpPorts().get(toId));
+
+        socket.send(packet);
         socket.close();
     }
 }

@@ -1,4 +1,4 @@
-package org.com.fisco;
+package com.uav.node.demos.contract;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -70,9 +70,9 @@ public class GDIDRegistry extends Contract {
 
     public List<GDIDDocumentUpdatedEventResponse> getGDIDDocumentUpdatedEvents(
             TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(GDIDDOCUMENTUPDATED_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(GDIDDOCUMENTUPDATED_EVENT, transactionReceipt);
         ArrayList<GDIDDocumentUpdatedEventResponse> responses = new ArrayList<GDIDDocumentUpdatedEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             GDIDDocumentUpdatedEventResponse typedResponse = new GDIDDocumentUpdatedEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.gdid = (byte[]) eventValues.getIndexedValues().get(0).getValue();
@@ -99,9 +99,9 @@ public class GDIDRegistry extends Contract {
 
     public List<GDIDRegisteredEventResponse> getGDIDRegisteredEvents(
             TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(GDIDREGISTERED_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(GDIDREGISTERED_EVENT, transactionReceipt);
         ArrayList<GDIDRegisteredEventResponse> responses = new ArrayList<GDIDRegisteredEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             GDIDRegisteredEventResponse typedResponse = new GDIDRegisteredEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.gdid = (byte[]) eventValues.getIndexedValues().get(0).getValue();
@@ -131,7 +131,7 @@ public class GDIDRegistry extends Contract {
     public Tuple5<String, BigInteger, BigInteger, BigInteger, String> gdidDocuments(String param0)
             throws ContractException {
         final Function function = new Function(FUNC_GDIDDOCUMENTS, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(param0)), 
+                Arrays.<Type>asList(new Utf8String(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Address>() {}));
         List<Type> results = executeCallWithMultipleValueReturn(function);
         return new Tuple5<String, BigInteger, BigInteger, BigInteger, String>(
@@ -144,7 +144,7 @@ public class GDIDRegistry extends Contract {
 
     public Function getMethodGdidDocumentsRawFunction(String param0) throws ContractException {
         final Function function = new Function(FUNC_GDIDDOCUMENTS, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(param0)), 
+                Arrays.<Type>asList(new Utf8String(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Address>() {}));
         return function;
     }
@@ -152,7 +152,7 @@ public class GDIDRegistry extends Contract {
     public Tuple8<String, List<byte[]>, List<String>, List<String>, BigInteger, BigInteger, BigInteger, String> getGDIDDocument(
             String gdid) throws ContractException {
         final Function function = new Function(FUNC_GETGDIDDOCUMENT, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid)), 
+                Arrays.<Type>asList(new Utf8String(gdid)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<DynamicArray<DynamicBytes>>() {}, new TypeReference<DynamicArray<Utf8String>>() {}, new TypeReference<DynamicArray<Utf8String>>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Address>() {}));
         List<Type> results = executeCallWithMultipleValueReturn(function);
         return new Tuple8<String, List<byte[]>, List<String>, List<String>, BigInteger, BigInteger, BigInteger, String>(
@@ -168,7 +168,7 @@ public class GDIDRegistry extends Contract {
 
     public Function getMethodGetGDIDDocumentRawFunction(String gdid) throws ContractException {
         final Function function = new Function(FUNC_GETGDIDDOCUMENT, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid)), 
+                Arrays.<Type>asList(new Utf8String(gdid)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<DynamicArray<DynamicBytes>>() {}, new TypeReference<DynamicArray<Utf8String>>() {}, new TypeReference<DynamicArray<Utf8String>>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Address>() {}));
         return function;
     }
@@ -177,17 +177,17 @@ public class GDIDRegistry extends Contract {
             List<String> serverList_, List<String> didLists_) {
         final Function function = new Function(
                 FUNC_REGISTERGDID, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(did_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(pkList_, org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serverList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didLists_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class))), 
+                Arrays.<Type>asList(new Utf8String(gdid_),
+                new Utf8String(did_),
+                new DynamicArray<DynamicBytes>(
+                        DynamicBytes.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(pkList_, DynamicBytes.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serverList_, Utf8String.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didLists_, Utf8String.class))),
                 Collections.<TypeReference<?>>emptyList(), 0);
         return executeTransaction(function);
     }
@@ -196,17 +196,17 @@ public class GDIDRegistry extends Contract {
             List<byte[]> pkList_, List<String> serverList_, List<String> didLists_) throws
             ContractException {
         final Function function = new Function(FUNC_REGISTERGDID, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(did_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(pkList_, org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serverList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didLists_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class))), 
+                Arrays.<Type>asList(new Utf8String(gdid_),
+                new Utf8String(did_),
+                new DynamicArray<DynamicBytes>(
+                        DynamicBytes.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(pkList_, DynamicBytes.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serverList_, Utf8String.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didLists_, Utf8String.class))),
                 Arrays.<TypeReference<?>>asList());
         return function;
     }
@@ -215,17 +215,17 @@ public class GDIDRegistry extends Contract {
             List<byte[]> pkList_, List<String> serverList_, List<String> didLists_) {
         final Function function = new Function(
                 FUNC_REGISTERGDID, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(did_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(pkList_, org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serverList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didLists_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class))), 
+                Arrays.<Type>asList(new Utf8String(gdid_),
+                new Utf8String(did_),
+                new DynamicArray<DynamicBytes>(
+                        DynamicBytes.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(pkList_, DynamicBytes.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serverList_, Utf8String.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didLists_, Utf8String.class))),
                 Collections.<TypeReference<?>>emptyList(), 0);
         return createSignedTransaction(function);
     }
@@ -234,17 +234,17 @@ public class GDIDRegistry extends Contract {
             List<String> serverList_, List<String> didLists_, TransactionCallback callback) {
         final Function function = new Function(
                 FUNC_REGISTERGDID, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(did_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(pkList_, org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serverList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didLists_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class))), 
+                Arrays.<Type>asList(new Utf8String(gdid_),
+                new Utf8String(did_),
+                new DynamicArray<DynamicBytes>(
+                        DynamicBytes.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(pkList_, DynamicBytes.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serverList_, Utf8String.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didLists_, Utf8String.class))),
                 Collections.<TypeReference<?>>emptyList(), 0);
         return asyncExecuteTransaction(function, callback);
     }
@@ -270,17 +270,17 @@ public class GDIDRegistry extends Contract {
             List<String> serviceList_, List<String> didList_, BigInteger seq) {
         final Function function = new Function(
                 FUNC_UPDATEGDIDDOCUMENT, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(publicKeys_, org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serviceList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint256(seq)), 
+                Arrays.<Type>asList(new Utf8String(gdid_),
+                new DynamicArray<DynamicBytes>(
+                        DynamicBytes.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(publicKeys_, DynamicBytes.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serviceList_, Utf8String.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didList_, Utf8String.class)),
+                new Uint256(seq)),
                 Collections.<TypeReference<?>>emptyList(), 0);
         return executeTransaction(function);
     }
@@ -289,17 +289,17 @@ public class GDIDRegistry extends Contract {
             List<String> serviceList_, List<String> didList_, BigInteger seq) throws
             ContractException {
         final Function function = new Function(FUNC_UPDATEGDIDDOCUMENT, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(publicKeys_, org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serviceList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint256(seq)), 
+                Arrays.<Type>asList(new Utf8String(gdid_),
+                new DynamicArray<DynamicBytes>(
+                        DynamicBytes.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(publicKeys_, DynamicBytes.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serviceList_, Utf8String.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didList_, Utf8String.class)),
+                new Uint256(seq)),
                 Arrays.<TypeReference<?>>asList());
         return function;
     }
@@ -308,17 +308,17 @@ public class GDIDRegistry extends Contract {
             List<String> serviceList_, List<String> didList_, BigInteger seq) {
         final Function function = new Function(
                 FUNC_UPDATEGDIDDOCUMENT, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(publicKeys_, org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serviceList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint256(seq)), 
+                Arrays.<Type>asList(new Utf8String(gdid_),
+                new DynamicArray<DynamicBytes>(
+                        DynamicBytes.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(publicKeys_, DynamicBytes.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serviceList_, Utf8String.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didList_, Utf8String.class)),
+                new Uint256(seq)),
                 Collections.<TypeReference<?>>emptyList(), 0);
         return createSignedTransaction(function);
     }
@@ -328,17 +328,17 @@ public class GDIDRegistry extends Contract {
             TransactionCallback callback) {
         final Function function = new Function(
                 FUNC_UPDATEGDIDDOCUMENT, 
-                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(gdid_), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(publicKeys_, org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serviceList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray<org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String>(
-                        org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class,
-                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didList_, org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String.class)), 
-                new org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint256(seq)), 
+                Arrays.<Type>asList(new Utf8String(gdid_),
+                new DynamicArray<DynamicBytes>(
+                        DynamicBytes.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(publicKeys_, DynamicBytes.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(serviceList_, Utf8String.class)),
+                new DynamicArray<Utf8String>(
+                        Utf8String.class,
+                        org.fisco.bcos.sdk.v3.codec.Utils.typeMap(didList_, Utf8String.class)),
+                new Uint256(seq)),
                 Collections.<TypeReference<?>>emptyList(), 0);
         return asyncExecuteTransaction(function, callback);
     }

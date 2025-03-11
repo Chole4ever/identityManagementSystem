@@ -1,8 +1,9 @@
-package com.example.uav.network.tcp;
+package com.uav.node.demos.network.tcp;
 
 
-import com.example.uav.model.Message;
-import com.example.uav.network.coder.InternalServerMsgCodec;
+
+import com.uav.node.demos.config.GlobalConfig;
+import com.uav.node.demos.model.Message;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -13,6 +14,8 @@ import io.netty.channel.pool.FixedChannelPool;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -24,12 +27,13 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class NettyClientPool {
     Logger logger = LoggerFactory.getLogger(NettyClientPool.class);
-    public final static Map<Integer, CompletableFuture<Message>> RESPONSE_MAP = new ConcurrentHashMap<>();
     private final static int MAX_CONNECTION =10;
     private final ChannelPoolMap<InetSocketAddress, FixedChannelPool> CHANNEL_POOL_MAP ;
     private final Bootstrap bootstrap = new Bootstrap();
 
-
+    @Qualifier("getConfig")
+    @Autowired
+    GlobalConfig config;
     public void SendMessage(InetSocketAddress inetSocketAddress, Message message) {
         FixedChannelPool channelPool = CHANNEL_POOL_MAP.get(inetSocketAddress);
         channelPool.acquire().addListener(future -> {
@@ -38,7 +42,7 @@ public class NettyClientPool {
                 channel.writeAndFlush(message).addListener(writeFuture -> {
                     if (writeFuture.isSuccess()) {
                         // 处理成功发送消息后的逻辑（如记录日志或处理响应）
-                        logger.info("To "+inetSocketAddress.getAddress()+" with command "+message.getCommand());
+                        logger.info("node: {} send message {} ",config.getOwnerId(),message.toString());
                     } else {
                         // 处理发送失败的情况
                         writeFuture.cause().printStackTrace();
@@ -50,8 +54,6 @@ public class NettyClientPool {
             }
         });
     }
-
-
 
     public static NettyClientPool getInstance(){
         return LazyHolder.INSTANCE;
@@ -90,19 +92,4 @@ public class NettyClientPool {
 
 
     }
-
-    public CompletableFuture<Message> getResponse(InetSocketAddress inetSocketAddress, Message message) throws ExecutionException, InterruptedException {
-        FixedChannelPool channelPool = CHANNEL_POOL_MAP.get(inetSocketAddress);
-        CompletableFuture<Message> completableFuture = new CompletableFuture<>();
-        channelPool.acquire().sync().addListener(future -> {
-            if(future.isSuccess())
-            {
-                NioSocketChannel channel = (NioSocketChannel) future.get();
-                channel.writeAndFlush(message).sync();
-            }
-        });
-        RESPONSE_MAP.put(message.getMemberId(), completableFuture);
-        return completableFuture;
-    }
-
 }

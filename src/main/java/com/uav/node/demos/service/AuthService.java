@@ -1,4 +1,4 @@
-package com.example.uav.service;
+package com.uav.node.demos.service;
 
 public class AuthService {
 }

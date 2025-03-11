@@ -1,4 +1,4 @@
-package com.example.uav.config;
+package com.uav.node.demos.config;
 
 import lombok.Data;
 import lombok.ToString;

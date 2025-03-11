@@ -48,7 +48,7 @@ contract DIDRegistry {
     // 更新DID文档
     function updateDIDDocument(string memory did, string memory gdid_,string[] memory publicKeys_,string[] memory serviceList_) public {
         require(bytes(did).length > 0, "DID cannot be empty");
-        require(didDocuments[did].publicKeys.length == 0, "DID not registered");
+        require(didDocuments[did].publicKeys.length > 0, "DID is not registered");
         require(didDocuments[did].owner == msg.sender, "You are not the owner of this DID");
 
         // 更新DID文档

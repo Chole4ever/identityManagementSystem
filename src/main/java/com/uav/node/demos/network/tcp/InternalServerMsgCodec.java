@@ -1,4 +1,4 @@
-package com.uav.node.demos.network.coder;
+package com.uav.node.demos.network.tcp;
 
 
 import com.uav.node.demos.model.Message;
@@ -31,34 +31,34 @@ public final class InternalServerMsgCodec  extends
             if (in.readableBytes() < Integer.SIZE / 8) {
                 return;
             }
-            // Mark the current read position for potential reset
+
             in.markReaderIndex();
-            // Read the length of the big integer
-            int bigIntegerLen = in.readInt();
-            // Ensure there are enough bytes for the big integer data
-            if (in.readableBytes() < bigIntegerLen) {
+
+            int fromId = in.readInt();
+
+            if (in.readableBytes() < Integer.SIZE / 8) {
                 return;
             }
-            // Read the big integer data into a ByteBuf
-            ByteBuf bigInteger_ = in.readBytes(bigIntegerLen);
 
-            // Convert ByteBuf to a byte array
-            byte[] bigIntegerBytes = new byte[bigInteger_.readableBytes()];
-            bigInteger_.readBytes(bigIntegerBytes);
-
-            // Convert the byte array to a BigInteger
-            BigInteger bigInteger = new BigInteger(bigIntegerBytes);
-
-            int memberId = in.readInt();
-
-            // Ensure the remaining readable bytes are sufficient for the command string
             int commandLen = in.readableBytes();
             String command = "unknown";
             if (commandLen > 0) {
                 ByteBuf commandBuf = in.readBytes(commandLen);
                 command = commandBuf.toString(StandardCharsets.UTF_8);  // Convert ByteBuf to String
             }
-            list.add(new Message(memberId,bigInteger,command));
+
+            if (in.readableBytes() < Integer.SIZE / 8) {
+                return;
+            }
+
+            int value =  in.readableBytes();
+            if(value>0)
+            {
+                ByteBuf addMsg = in.readBytes(value);
+                list.add(new Message(fromId,command, addMsg.array()));
+            }else list.add(new Message(fromId,command));
+
+
         }
     }
 
@@ -72,31 +72,29 @@ public final class InternalServerMsgCodec  extends
         @Override
         protected void encode(ChannelHandlerContext channelHandlerContext, Message message, ByteBuf byteBuf) throws Exception {
             if (genericClass.isInstance(message)) {
-                // Get the BigInteger from the message
-                BigInteger bigInteger = message.getBigInteger();
 
-                // Convert the BigInteger to a byte array
-                byte[] bigIntegerBytes = bigInteger.toByteArray();
+                int fromId = message.getFromId();
 
-                // Write the length of the BigInteger byte array
-                byteBuf.writeInt(bigIntegerBytes.length);
+                byteBuf.writeInt(fromId);//id
 
-                byteBuf.writeInt(message.getFromId());
-                // Write the BigInteger bytes into the ByteBuf
-                byteBuf.writeBytes(bigIntegerBytes);
 
-                // Handle the command part (optional)
                 String command = message.getCommand();
                 if (command != null && !command.isEmpty()) {
                     // Convert the command to bytes using UTF-8 encoding
                     byte[] commandBytes = command.getBytes(StandardCharsets.UTF_8);
-
                     // Write the length of the command byte array
                     byteBuf.writeInt(commandBytes.length);
-
                     // Write the command bytes into the ByteBuf
                     byteBuf.writeBytes(commandBytes);
                 }
+
+                byte[] addMsg = message.getValue();
+                if(addMsg!=null&&addMsg.length>0)
+                {
+                    byteBuf.writeInt(addMsg.length);
+                    byteBuf.writeBytes(addMsg);
+                }else byteBuf.writeInt(0);
+
             }
         }
     }

@@ -1,6 +1,6 @@
-package com.example.uav.config;
+package com.uav.node.demos.config;
 
-import jakarta.annotation.PostConstruct;
+
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.BcosSDK;
@@ -9,8 +9,8 @@ import org.fisco.bcos.sdk.v3.config.exceptions.ConfigException;
 import org.fisco.bcos.sdk.v3.config.model.ConfigProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 
 @Slf4j

@@ -1,4 +1,4 @@
-package com.example.uav.model;
+package com.uav.node.demos.model;
 
 public class Group {
 }
