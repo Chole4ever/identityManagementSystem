@@ -38,7 +38,7 @@ public class TransportService {
     }
 
     public void sendUDPMessage(Message message, int toId) throws Exception {
-        logger.info("node "+config.getOwnerId()+" send udp message: "+message.toGood());
+        logger.info("node "+config.getOwnerId()+" send udp message to {}: {}",toId,message.toGood());
         udpClient.send(message,toId);
     }
     public void sendBroadcastMessage(Message message) throws Exception {
