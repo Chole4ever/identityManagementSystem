@@ -27,7 +27,7 @@ public class UDPServer {
     GlobalConfig config;
 
     @PostConstruct
-    public void startServer() {
+    public void startServer() throws SocketException {
 
         DatagramSocket broadSocket ;
         DatagramSocket p2pSocket ;
@@ -45,6 +45,7 @@ public class UDPServer {
         DatagramSocket finalSocket = broadSocket;
 
         DatagramSocket finalSocket2 = p2pSocket;
+
         executorService.submit(() -> {
             byte[] buffer = new byte[2048];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -53,7 +54,6 @@ public class UDPServer {
                 try {
                     finalSocket.receive(packet); // 阻塞等待数据
                     String msg = new String(packet.getData(), 0, packet.getLength());
-                    // 调用回调方法处理接收到的消息
                     int length = packet.getLength();
                     if (length > buffer.length) {
                         logger.error("Received packet exceeds buffer size: " + length);

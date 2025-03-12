@@ -65,7 +65,7 @@ public class MessageService {
                 if(pkshares.size()==config.getCount()) {
                     logger.info("node {} calculate PK key...",config.getOwnerId());
                     ECP2 gpk = dkgService.computeGroupPublicKey(pkshares);
-                    logger.info("Group PK key: {}",gpk);
+                    logger.info("Group PK key: {}",gpk.toString());
                     gdidService.launchGdidRR();
                 }
                 break;

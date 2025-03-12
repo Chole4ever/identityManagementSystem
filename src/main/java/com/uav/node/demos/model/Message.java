@@ -1,8 +1,11 @@
 package com.uav.node.demos.model;
 
+import com.uav.node.demos.service.TransportService;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.socket.DatagramPacket;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -11,7 +14,7 @@ import java.util.Arrays;
 
 @Data
 public class Message{
-
+    static Logger logger = LoggerFactory.getLogger(Message.class);
     /*
     消息结构：
     fromId,bigIntegerLen,bigInteger,command.len,command
@@ -20,7 +23,11 @@ public class Message{
     private String command;
     private byte[] value;
 
-    public Message() {}
+    public Message() {
+        this.fromId = 0;
+        this.command = "command";
+        this.value = null;
+    }
 
     public Message(int fromId,String command,byte[] value)
     {
@@ -60,27 +67,34 @@ public class Message{
 
     public static Message fromByteArray(byte[] bytes) {
         //   bigIntegerLen,bigInteger,memberId,command.len,command
-        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        try {
+            ByteBuffer buffer = ByteBuffer.wrap(bytes);
 
-        Message message = new Message();
+            Message message = new Message();
 
-        int id = buffer.getInt();
-        message.setFromId(id);
+            int id = buffer.getInt();
+            message.setFromId(id);
 
-        int commandLen = buffer.getInt();  // 读取 command 字符串长度
-        byte[] commandBytes = new byte[commandLen];
-        buffer.get(commandBytes);  // 读取 command 字符串
-        message.setCommand(new String(commandBytes, StandardCharsets.UTF_8));
+            int commandLen = buffer.getInt();  // 读取 command 字符串长度
+            byte[] commandBytes = new byte[commandLen];
+            buffer.get(commandBytes);  // 读取 command 字符串
+            message.setCommand(new String(commandBytes, StandardCharsets.UTF_8));
 
-        if(buffer.remaining()>0)
+            if(buffer.remaining()>0)
+            {
+                int valueLen = buffer.getInt();  // 读取 command 字符串长度
+
+                byte[] valueBytes = new byte[valueLen];
+                buffer.get(valueBytes);  // 读取 command 字符串
+                message.setValue(valueBytes);
+            }
+            return message;
+
+        }catch (Exception e)
         {
-            int valueLen = buffer.getInt();  // 读取 command 字符串长度
-
-            byte[] valueBytes = new byte[valueLen];
-            buffer.get(valueBytes);  // 读取 command 字符串
-            message.setValue(valueBytes);
+            logger.info(e.getMessage());
         }
-        return message;
+        return null;
     }
 
 }
