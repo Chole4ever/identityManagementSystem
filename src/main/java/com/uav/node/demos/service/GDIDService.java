@@ -131,7 +131,7 @@ public class GDIDService {
     public void sendSubGPKShare() throws Exception {
         ECP2[] publicCoeffs = cryptoBean.getPublicCoeffs();
         ECP2 pkshare = publicCoeffs[0];
-        byte[] value = new byte[48];
+        byte[] value = new byte[192];
         pkshare.toBytes(value);
         Message message = new Message(config.getOwnerId(),"SEND_PUB_KEY_SHARED",value);
         transportService.sendUDPMessage(message,config.getLeaderId());
