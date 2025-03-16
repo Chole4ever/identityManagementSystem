@@ -133,6 +133,10 @@ public class GDIDService {
         ECP2 pkshare = publicCoeffs[0];
         byte[] value = new byte[192];
         pkshare.toBytes(value);
+
+        //test
+        ECP2 pkshare_ = ECP2.fromBytes(value);
+
         Message message = new Message(config.getOwnerId(),"SEND_PUB_KEY_SHARED",value);
         transportService.sendUDPMessage(message,config.getLeaderId());
     }

@@ -45,7 +45,17 @@ public class DKGService {
 
         BIG[] privateCoeffs  = new BIG[t+1];
         ECP2[] publicCoeffs  = new ECP2[t+1];
+
+        String nodeId = "node"; // 从环境变量或配置中读取每个节点的唯一ID
+        long timestamp = System.currentTimeMillis();
+        String uniqueSeed = nodeId + timestamp;
+
+        // 将唯一种子转换为字节数组（BIG库通常需要字节输入）
+        byte[] seedBytes = uniqueSeed.getBytes();
+
         RAND rng = new RAND();
+        rng.clean(); // 清空初始状态
+        rng.seed(seedBytes.length, seedBytes); // 注入唯一种子
         for (int k=0; k<=t; k++) {
             privateCoeffs[k] = BIG.randomnum(q, rng); // a_k ∈ Z_q
             publicCoeffs[k] = G2_GENERATOR.mul(privateCoeffs[k]);   // A_k = a_k * G
