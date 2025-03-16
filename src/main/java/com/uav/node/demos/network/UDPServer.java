@@ -47,7 +47,7 @@ public class UDPServer {
         DatagramSocket finalSocket2 = p2pSocket;
 
         executorService.submit(() -> {
-            byte[] buffer = new byte[4092];
+            byte[] buffer = new byte[32768];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             while (true) {
@@ -70,7 +70,7 @@ public class UDPServer {
             }
         });
         executorService.submit(() -> {
-            byte[] buffer = new byte[2048];
+            byte[] buffer = new byte[32768];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             while (true) {
