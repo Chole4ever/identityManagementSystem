@@ -85,9 +85,10 @@ public class UDPServer {
 
                     callback.onMessageReceived(msg, packet.getAddress());
                 } catch (IOException e) {
-                    logger.info(e.getMessage());
+                    logger.info(String.valueOf(e.getCause()));
                     break;
                 } catch (Exception e) {
+                    logger.info(String.valueOf(e.getCause()));
                     throw new RuntimeException(e);
                 }
             }

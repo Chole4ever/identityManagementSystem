@@ -68,7 +68,7 @@ public class GDIDService {
 
     }
 
-    public void sendRRToSc(ECP agg) throws NoSuchAlgorithmException, TransactionBaseException, ContractCodecException, IOException {
+    public void sendRRToSc(ECP agg) throws TransactionBaseException, ContractCodecException, IOException {
 
         List<String> didLists = config.getDidLists();
         String leaderdid = didLists.get(config.getLeaderId());
@@ -78,10 +78,11 @@ public class GDIDService {
         cryptoBean.getGroupPubKey().toBytes(pkbytes);
 
 
-        byte[] aggbytes = new byte[96];
+        byte[] aggbytes = new byte[48];
         agg.toBytes(aggbytes,false);
         List<String> serverList = new ArrayList<>();
         serverList.add("rescue");serverList.add("transport");serverList.add("monitor");
+
         smartContractService.registerGDID(config.getGdid(),leaderdid,pkbytes,serverList,didLists,aggbytes);
     }
 
@@ -130,7 +131,7 @@ public class GDIDService {
     public void sendSubGPKShare() throws Exception {
         ECP2[] publicCoeffs = cryptoBean.getPublicCoeffs();
         ECP2 pkshare = publicCoeffs[0];
-        byte[] value = new byte[192];
+        byte[] value = new byte[48];
         pkshare.toBytes(value);
         Message message = new Message(config.getOwnerId(),"SEND_PUB_KEY_SHARED",value);
         transportService.sendUDPMessage(message,config.getLeaderId());
