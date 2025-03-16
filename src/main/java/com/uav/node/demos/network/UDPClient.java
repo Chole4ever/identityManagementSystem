@@ -2,12 +2,15 @@ package com.uav.node.demos.network;
 
 import com.uav.node.demos.config.GlobalConfig;
 import com.uav.node.demos.model.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -15,6 +18,8 @@ public class UDPClient {
     @Qualifier("getConfig")
     @Autowired
     GlobalConfig config;
+
+    Logger logger = LoggerFactory.getLogger(UDPClient.class);
     public void Broadcast(Message message) throws Exception {
         DatagramSocket socket = new DatagramSocket();
         socket.setBroadcast(true);
@@ -41,11 +46,11 @@ public class UDPClient {
         List<String> ip = config.getPeerIps();
         List<Integer> peerPorts = config.getPeerudpPorts();
         String host = ip.get(toId);
-        int port =peerPorts.get(toId);
+        int port = peerPorts.get(toId);
 
         InetAddress address = new InetSocketAddress(host,port).getAddress();
-        byte[] data = message.toByteArray();
 
+        byte[] data = message.toByteArray();
         DatagramPacket packet = new DatagramPacket(
                 data, data.length, address, config.getPeerudpPorts().get(toId));
 

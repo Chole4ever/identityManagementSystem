@@ -46,7 +46,7 @@ public class DKGService {
         BIG[] privateCoeffs  = new BIG[t+1];
         ECP2[] publicCoeffs  = new ECP2[t+1];
 
-        String nodeId = "node" + String.valueOf(config.getOwnerId()); // 从环境变量或配置中读取每个节点的唯一ID
+        String nodeId = "node" + config.getOwnerId(); // 从环境变量或配置中读取每个节点的唯一ID
         long timestamp = System.currentTimeMillis();
         String uniqueSeed = nodeId + timestamp;
 
@@ -93,6 +93,7 @@ public class DKGService {
     }
     public ECP2 computeGroupPublicKey(List<ECP2> publicCoeffs)
     {
+        logger.info("publicCoeffs"+publicCoeffs);
         ECP2 groupPubKey = new ECP2();
         groupPubKey.inf();
         for (ECP2 p : publicCoeffs) {
@@ -101,6 +102,7 @@ public class DKGService {
         groupPubKey.affine();
         cryptoBean.setGroupPubKey(groupPubKey);
         return groupPubKey;
+
     }
 
     public ECP signSig(byte[] metadata) {

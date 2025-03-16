@@ -25,6 +25,48 @@ public class UDPServer {
     @Qualifier("getConfig")
     @Autowired
     GlobalConfig config;
+//
+//    @PostConstruct
+//    public void startServer() throws SocketException {
+//
+//        DatagramSocket broadSocket ;
+//
+//        try {
+//            broadSocket = new DatagramSocket(config.getBroadcastPort());
+//        } catch (SocketException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        logger.info("node "+config.getOwnerId()+" 服务端监听中（广播端口 {}}）...",config.getBroadcastPort());
+//
+//        ExecutorService executorService = Executors.newFixedThreadPool(1);
+//        DatagramSocket finalSocket = broadSocket;
+//
+//        executorService.submit(() -> {
+//            byte[] buffer = new byte[32768];
+//            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+//
+//            while (true) {
+//                try {
+//                    finalSocket.receive(packet); // 阻塞等待数据
+//                    String msg = new String(packet.getData(), 0, packet.getLength());
+//                    int length = packet.getLength();
+//                    if (length > buffer.length) {
+//                        logger.error("Received packet exceeds buffer size: " + length);
+//                        // 可以选择丢弃或者分块处理
+//                        continue;
+//                    }
+//                    callback.onMessageReceived(msg, packet.getAddress());
+//                } catch (IOException e) {
+//                    logger.info(e.getMessage());
+//                    break;
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        });
+//
+//    }
 
     @PostConstruct
     public void startServer() throws SocketException {
@@ -53,14 +95,15 @@ public class UDPServer {
             while (true) {
                 try {
                     finalSocket.receive(packet); // 阻塞等待数据
-                    String msg = new String(packet.getData(), 0, packet.getLength());
+                    byte[] bytes = packet.getData();
+
                     int length = packet.getLength();
                     if (length > buffer.length) {
                         logger.error("Received packet exceeds buffer size: " + length);
                         // 可以选择丢弃或者分块处理
                         continue;
                     }
-                    callback.onMessageReceived(msg, packet.getAddress());
+                    callback.onMessageReceived(bytes, packet.getAddress());
                 } catch (IOException e) {
                     logger.info(e.getMessage());
                     break;
@@ -76,14 +119,15 @@ public class UDPServer {
             while (true) {
                 try {
                     finalSocket2.receive(packet); // 阻塞等待数据
-                    String msg = new String(packet.getData(), 0, packet.getLength());
+                    byte[] bytes = packet.getData();
+
                     int length = packet.getLength();
                     if (length > buffer.length) {
                         logger.error("Received packet exceeds buffer size: " + length);
+                        // 可以选择丢弃或者分块处理
                         continue;
                     }
-
-                    callback.onMessageReceived(msg, packet.getAddress());
+                    callback.onMessageReceived(bytes, packet.getAddress());
                 } catch (IOException e) {
                     logger.info(String.valueOf(e.getCause()));
                     break;
@@ -94,4 +138,5 @@ public class UDPServer {
             }
         });
     }
+
 }

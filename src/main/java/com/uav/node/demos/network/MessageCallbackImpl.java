@@ -19,9 +19,9 @@ public class MessageCallbackImpl implements MessageCallback {
     @Autowired
     MessageService messageService;
     @Override
-    public void onMessageReceived(String m, InetAddress address) throws Exception {
+    public void onMessageReceived(byte[] m, InetAddress address) throws Exception {
 
-        Message message =  Message.fromByteArray(m.getBytes());
+        Message message =  Message.fromByteArray(m);
         logger.info("node "+config.getOwnerId()+" received message from "+message.getFromId()+" "+message.toGood());
         messageService.processMessage(message);
 

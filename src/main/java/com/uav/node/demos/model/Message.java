@@ -71,7 +71,7 @@ public class Message{
     }
 
     public static Message fromByteArray(byte[] bytes) {
-        //   bigIntegerLen,bigInteger,memberId,command.len,command
+
         try {
             ByteBuffer buffer = ByteBuffer.wrap(bytes);
 
