@@ -45,6 +45,7 @@ public class MessageService {
                 dkgService.generatePolynomial();
                 gdidService.sendSubGPKShare();
                 gdidService.sendSubSKShares();
+                break;
             case "SEND_SUB_KEY_SHARED":
                 List<BIG> skshares = cryptoBean.getSkshares();
                 BIG value = BIG.fromBytes(message.getValue());
@@ -97,6 +98,7 @@ public class MessageService {
                 break;
             default:
                 logger.info("Unknown message type: " + message.getCommand());
+                break;
         }
     }
 

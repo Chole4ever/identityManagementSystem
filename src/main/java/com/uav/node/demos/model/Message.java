@@ -29,6 +29,11 @@ public class Message{
         this.value = null;
     }
 
+    public Message(String command) {
+        this.fromId = 0;
+        this.command = command;
+        this.value = null;
+    }
     public Message(int fromId,String command,byte[] value)
     {
         this.fromId = fromId;

@@ -47,7 +47,7 @@ public class UDPServer {
         DatagramSocket finalSocket2 = p2pSocket;
 
         executorService.submit(() -> {
-            byte[] buffer = new byte[2048];
+            byte[] buffer = new byte[4092];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             while (true) {
@@ -62,7 +62,7 @@ public class UDPServer {
                     }
                     callback.onMessageReceived(msg, packet.getAddress());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.info(e.getMessage());
                     break;
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -85,7 +85,7 @@ public class UDPServer {
 
                     callback.onMessageReceived(msg, packet.getAddress());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.info(e.getMessage());
                     break;
                 } catch (Exception e) {
                     throw new RuntimeException(e);

@@ -27,9 +27,11 @@ public class UDPClient {
                 data, data.length, address, 44445);
         DatagramPacket packet3 = new DatagramPacket(
                 data, data.length, address, 44446);
+
         socket.send(packet1);
         socket.send(packet2);
         socket.send(packet3);
+
         socket.close();
     }
 

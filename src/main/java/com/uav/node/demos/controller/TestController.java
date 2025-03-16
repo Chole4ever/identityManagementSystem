@@ -77,9 +77,10 @@ public class TestController {
     @GetMapping("/test2")
     public ResponseEntity<String> test2() throws Exception {
 
-        transportService.sendBroadcastMessage(new Message());
-        transportService.sendUDPMessage(new Message(),1);
-        transportService.sendUDPMessage(new Message(),2);
+        transportService.sendBroadcastMessage(new Message("broadcast"));
+        transportService.sendUDPMessage(new Message("udp"),1);
+        transportService.sendUDPMessage(new Message("udp"),2);
+        transportService.sendBroadcastMessage(new Message("broadcast2"));
        return ResponseEntity.ok("hello world!");
     }
 
