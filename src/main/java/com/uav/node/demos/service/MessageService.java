@@ -57,7 +57,6 @@ public class MessageService {
                     BIG sk = dkgService.computePrivateKey(skshares);
                     cryptoBean.setSk_i(sk);
                     logger.info("node {} generates sub key {} ",config.getOwnerId(),sk);
-
                 }
                 break;
             case "SEND_PUB_KEY_SHARED":
@@ -88,7 +87,7 @@ public class MessageService {
             case "GDID_GENERATION_RESPONSE":
                   byte[] subbyte = message.getValue();
                   ECP sig_i = ECP.fromBytes(subbyte);
-                  int from = message.getFromId();
+                  int from = message.getFromId()+1;
                   HashMap<Integer, ECP> partialSigs = cryptoBean.getPartialSigs();
                   partialSigs.put(from,sig_i);
                   cryptoBean.setPartialSigs(partialSigs);
