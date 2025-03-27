@@ -87,7 +87,7 @@ public class DKGService {
             sk_i.add(share);
             sk_i.mod(q);
         }
-        cryptoBean.setSk_i(sk_i);
+
         return sk_i;
     }
     public ECP2 computeGroupPublicKey(List<ECP2> publicCoeffs)

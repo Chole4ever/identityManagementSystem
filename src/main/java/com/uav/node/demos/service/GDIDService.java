@@ -73,10 +73,8 @@ public class GDIDService {
         List<String> didLists = config.getDidLists();
         String leaderdid = didLists.get(config.getLeaderId());
 
-
         byte[] pkbytes = new byte[192];
         cryptoBean.getGroupPubKey().toBytes(pkbytes);
-
 
         byte[] aggbytes = new byte[48];
         agg.toBytes(aggbytes,false);

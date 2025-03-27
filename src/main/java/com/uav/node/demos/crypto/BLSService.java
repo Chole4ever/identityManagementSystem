@@ -30,18 +30,20 @@ public class BLSService {
         for (Map.Entry<Integer, ECP> entry : partialSigs.entrySet()){
             signers.add(entry.getKey());
         }
+        System.out.println("partialSigs "+ partialSigs);
+        System.out.println("signers "+ signers);
 
         ECP aggregatedSig = new ECP();
         aggregatedSig.inf();
         for (Map.Entry<Integer, ECP> entry : partialSigs.entrySet()) {
             int signerId = entry.getKey();
             ECP sig = entry.getValue();
-
             BIG coeff = computeLagrangeCoeff(signers, signerId, q);
-
             ECP scaled = sig.mul(coeff);
             scaled.affine();
-
+            System.out.println("signerId "+ signerId);
+            System.out.println("coeff "+ coeff);
+            System.out.println("scaled "+ scaled);
             aggregatedSig.add(scaled);
             aggregatedSig.affine();
         }
@@ -106,4 +108,7 @@ public class BLSService {
 
     }
 
+    public ECP2 computeGk(BIG sk) {
+        return G2_GENERATOR.mul(sk);
+    }
 }

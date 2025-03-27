@@ -32,6 +32,7 @@ public class CryptoBean {
     private BIG[] privateCoeffs;
     private ECP2[] publicCoeffs;
     private BIG sk_i;
+    private ECP2 pk_i;
     private ECP2 groupPubKey;
     private HashMap<Integer,ECP> partialSigs;
     private byte[] metadata;

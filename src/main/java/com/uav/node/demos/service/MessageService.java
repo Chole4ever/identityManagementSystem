@@ -55,7 +55,11 @@ public class MessageService {
                 if(skshares.size()==config.getCount()) {
                     logger.info("node {} calculate sub key...",config.getOwnerId());
                     BIG sk = dkgService.computePrivateKey(skshares);
+                    ECP2 pk = blsService.computeGk(sk);
+                    cryptoBean.setSk_i(sk);
+                    cryptoBean.setPk_i(pk);
                     logger.info("node {} generates sub key {} ",config.getOwnerId(),sk);
+                    logger.info("node {} generates sub public key {} ",config.getOwnerId(),pk);
                 }
                 break;
             case "SEND_PUB_KEY_SHARED":
@@ -90,7 +94,7 @@ public class MessageService {
                   HashMap<Integer, ECP> partialSigs = cryptoBean.getPartialSigs();
                   partialSigs.put(from,sig_i);
                   cryptoBean.setPartialSigs(partialSigs);
-                if(partialSigs.size()==config.getThreshold()) {
+                if(partialSigs.size()==config.getThreshold()+1) {
                     logger.info("node {} calculate agg sig...",config.getOwnerId());
                     ECP agg = blsService.aggregatedSignatures(partialSigs);
                     logger.info("node {} generates agg sig {} ",config.getOwnerId(),agg);
