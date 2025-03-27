@@ -6,9 +6,7 @@ import com.uav.node.demos.crypto.BLSService;
 import com.uav.node.demos.crypto.DKGService;
 import com.uav.node.demos.model.Message;
 import org.apache.commons.math3.FieldElement;
-import org.apache.milagro.amcl.BLS381.BIG;
-import org.apache.milagro.amcl.BLS381.ECP;
-import org.apache.milagro.amcl.BLS381.ECP2;
+import org.apache.milagro.amcl.BLS381.*;
 import org.bouncycastle.jcajce.provider.symmetric.RC2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +19,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.uav.node.demos.crypto.BLSService.verifySignature;
+import static com.uav.node.demos.crypto.DKGService.hashToG1;
 
 @Service
 public class MessageService {
@@ -73,6 +74,7 @@ public class MessageService {
             case "BROADG_DID_GENERATION_REQUEST":
 
                 byte[] metadata = message.getValue();
+                cryptoBean.setMetadata(metadata);
                 ECP subSig = dkgService.signSig(metadata);
                 logger.info("node {} generates sub-sig {} ",config.getOwnerId(),subSig);
                 byte[] subSigbytes = new byte[97];
@@ -92,9 +94,16 @@ public class MessageService {
                     logger.info("node {} calculate agg sig...",config.getOwnerId());
                     ECP agg = blsService.aggregatedSignatures(partialSigs);
                     logger.info("node {} generates agg sig {} ",config.getOwnerId(),agg);
-                    gdidService.sendRRToSc(agg);
-                }
 
+                    if(verifySignature(cryptoBean.getGroupPubKey(),agg, cryptoBean.getMetadata()))
+                    {
+                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
+                        gdidService.sendRRToSc(agg);
+
+                    }else{
+                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"false");
+                    }
+                }
                 break;
             default:
                 logger.info("Unknown message type: " + message.getCommand());

@@ -31,13 +31,11 @@ public class DKGService {
     private static final ECP2 G2_GENERATOR = ECP2.generator();  // G2群的生成元
     private static final BIG q = new BIG(ROM.CURVE_Order);
     private  int t;
-    private  int n;
 
     @PostConstruct
     private void init()
     {
         t=config.getThreshold();
-        n=config.getCount();
     }
 
     // 1. 生成随机多项式及承诺
@@ -71,15 +69,16 @@ public class DKGService {
 
     // 2. 发送份额给其他参与者
     public BIG getSharesById(int targetId) {
-        BIG share = new BIG(0);
-        for (int k=0; k<=t; k++) {
-            BIG j = new BIG(targetId); // 目标ID作为j
-            BIG term = j.powmod(new BIG(k), q);
-            term = BIG.modmul(cryptoBean.getPrivateCoeffs()[k], term, q);
-            share.add(term);
-            share.mod(q);
+        BIG sum = new BIG(0);
+        BIG j = new BIG(targetId);
+
+        for (int k = 0; k <= t; k++) {
+            BIG jk = j.powmod(new BIG(k), q); // j^k
+            BIG term = BIG.modmul(cryptoBean.getPrivateCoeffs()[k], jk, q);
+            sum.add(term);
+            sum.mod(q);
         }
-        return share;
+        return sum;
     }
 
     public BIG computePrivateKey(List<BIG> shares ) {
@@ -109,20 +108,19 @@ public class DKGService {
         ECP H_m = hashToG1(metadata);
         H_m.affine();
         ECP sig_i = new ECP(H_m);
-        sig_i = sig_i.mul(cryptoBean.getSk_i());  // 使用 sk_i 而不是 privateCoeffs[0]
+        sig_i = sig_i.mul(cryptoBean.getSk_i());
         sig_i.affine();
         return sig_i;
 
     }
     public static ECP hashToG1(byte[] message) {
-        byte[] hash = new byte[48];
+        byte[] hash;
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-384");
             hash = digest.digest(message);
         } catch (Exception e) {
             throw new RuntimeException("Hash failed");
         }
-
         return ECP.mapit(hash);
     }
 }

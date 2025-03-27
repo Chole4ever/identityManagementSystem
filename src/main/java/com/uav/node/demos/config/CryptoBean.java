@@ -34,6 +34,7 @@ public class CryptoBean {
     private BIG sk_i;
     private ECP2 groupPubKey;
     private HashMap<Integer,ECP> partialSigs;
+    private byte[] metadata;
 
     @PostConstruct
     public void init() {
