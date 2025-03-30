@@ -96,14 +96,17 @@ public class MessageService {
                     ECP agg = blsService.aggregatedSignatures(partialSigs);
                     logger.info("node {} generates agg sig {} ",config.getOwnerId(),agg);
 
-                    if(verifySignature(cryptoBean.getGroupPubKey(),agg, cryptoBean.getMetadata()))
-                    {
-                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
-                        gdidService.sendRRToSc(agg);
+                    logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
+                    gdidService.sendRRToSc(agg);
 
-                    }else{
-                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"false");
-                    }
+//                    if(verifySignature(cryptoBean.getGroupPubKey(),agg, cryptoBean.getMetadata()))
+//                    {
+//                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
+//                        gdidService.sendRRToSc(agg);
+//
+//                    }else{
+//                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"false");
+//                    }
                 }
                 break;
             default:

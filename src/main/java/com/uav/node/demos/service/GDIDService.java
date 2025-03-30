@@ -76,7 +76,7 @@ public class GDIDService {
         byte[] pkbytes = new byte[192];
         cryptoBean.getGroupPubKey().toBytes(pkbytes);
 
-        byte[] aggbytes = new byte[48];
+        byte[] aggbytes = new byte[97];
         agg.toBytes(aggbytes,false);
         List<String> serverList = new ArrayList<>();
         serverList.add("rescue");serverList.add("transport");serverList.add("monitor");

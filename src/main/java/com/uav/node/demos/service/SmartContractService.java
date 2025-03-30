@@ -5,6 +5,9 @@ import com.uav.node.demos.config.GlobalConfig;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.ContractCodecException;
+import org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray;
+import org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes;
+import org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.transaction.manager.AssembleTransactionProcessor;
 import org.fisco.bcos.sdk.v3.transaction.manager.TransactionProcessorFactory;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -43,11 +47,11 @@ public class SmartContractService {
         BcosSDK sdk = fiscoBcos.getBcosSDK();
         client = sdk.getClient("group0");
         cryptoKeyPair = client.getCryptoSuite().getCryptoKeyPair();
-        transactionProcessor =
-                TransactionProcessorFactory.createAssembleTransactionProcessor
-                        (client, cryptoKeyPair,
-                                "src/main/resources/abi/DIDRegistry.abi",
-                                "src/main/resources/bin/DIDRegistry.bin");
+//        transactionProcessor =
+//                TransactionProcessorFactory.createAssembleTransactionProcessor
+//                        (client, cryptoKeyPair,
+//                                "src/main/resources/abi/DIDRegistry.abi",
+//                                "src/main/resources/bin/DIDRegistry.bin");
     }
 
 
@@ -56,16 +60,10 @@ public class SmartContractService {
         AssembleTransactionProcessor transactionProcessor =
                 TransactionProcessorFactory.createAssembleTransactionProcessor
                         (client, cryptoKeyPair,
-                                "src/main/resources/abi/DIDRegistry.abi",
-                                "src/main/resources/bin/DIDRegistry.bin");
+                                "src/main/resources/abi/GDIDRegistry.abi",
+                                "src/main/resources/bin/GDIDRegistry.bin");
 
-        List<Object> params = new ArrayList<>();
-        params.add(gdid);
-        params.add(leaderdid);
-        params.add(pkList);
-        params.add(serverList);
-        params.add(didLists);
-        params.add(aggr);
+        List<Object> params = wrapParams(gdid,leaderdid,pkList,serverList,didLists);
 
         TransactionResponse transactionResponse =
                 transactionProcessor.sendTransactionAndGetResponseByContractLoader(
@@ -77,5 +75,38 @@ public class SmartContractService {
         logger.info("Group DID generation finished\n");
         logger.info(transactionResponse.toString());
     }
+
+    private static List<Object> wrapParams(String gdid_,String did_,byte[] pkList,List<String> servers,List<String> dids)
+    {
+
+        DynamicBytes[] pkBytesArray = new DynamicBytes[]{ new DynamicBytes(pkList) };
+        DynamicArray<DynamicBytes> pkListParam = new DynamicArray<>(DynamicBytes.class, pkBytesArray);
+
+        // 构造serverList（string[]）
+        List<Utf8String> serverArray = new ArrayList<>();
+        for(String a:servers)
+        {
+            serverArray.add(new Utf8String(a));
+        }
+        DynamicArray<Utf8String> serverParam = new DynamicArray<>(Utf8String.class, serverArray.toArray(new Utf8String[0]));
+
+        // 构造didLists（string[]）
+        List<Utf8String> didArray = new ArrayList<>();
+        for(String a:dids)
+        {
+            didArray.add(new Utf8String(a));
+        }
+        DynamicArray<Utf8String> didParam = new DynamicArray<>(Utf8String.class, didArray.toArray(new Utf8String[0]));
+
+        // 构造参数列表
+        return Arrays.asList(
+                new Utf8String(gdid_),
+                new Utf8String(did_),
+                pkListParam,    // bytes[]
+                serverParam,    // string[]
+                didParam        // string[]
+        );
+    }
+
 }
 

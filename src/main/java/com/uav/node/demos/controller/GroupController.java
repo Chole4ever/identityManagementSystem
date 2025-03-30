@@ -7,6 +7,10 @@ import com.uav.node.demos.service.GDIDService;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.ContractCodecException;
+import org.fisco.bcos.sdk.v3.codec.datatypes.BytesType;
+import org.fisco.bcos.sdk.v3.codec.datatypes.DynamicArray;
+import org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes;
+import org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.transaction.manager.AssembleTransactionProcessor;
 import org.fisco.bcos.sdk.v3.transaction.manager.TransactionProcessorFactory;
@@ -22,10 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class GroupController {
@@ -95,23 +97,36 @@ public class GroupController {
 
         String gdid_ ="did:group:6333285578434256823";
         String did_ ="did:UAV:979185578434256823";
+
+        // 构造bytes[]参数
         String pk = "7142513692128887312957366097124764110363121271150334492810673144269002981787722838129250989787910354441465084994276682272592145092043385028452561113389658";
         byte[] pkList = pk.getBytes();
-        List<String> server = new ArrayList<>();
-        server.add("rescue");
-        server.add("transport");
-        List<String> didlist = new ArrayList<>();
-        didlist.add(did_);
-        didlist.add("did:UAV:6333285578434256823");
-        didlist.add("did:UAV:6807135778434256823");
+        DynamicBytes[] pkBytesArray = new DynamicBytes[]{ new DynamicBytes(pkList) };
+        DynamicArray<DynamicBytes> pkListParam = new DynamicArray<>(DynamicBytes.class, pkBytesArray);
 
-        List<Object> params = new ArrayList<>();
-        params.add(gdid_);
-        params.add(did_);
-        params.add(pkList);
-        params.add(server);
-        params.add(didlist);
+        // 构造serverList（string[]）
+        List<Utf8String> serverArray = Arrays.asList(
+                new Utf8String("rescue"),
+                new Utf8String("transport")
+        );
+        DynamicArray<Utf8String> serverParam = new DynamicArray<>(Utf8String.class, serverArray.toArray(new Utf8String[0]));
 
+        // 构造didLists（string[]）
+        List<Utf8String> didArray = Arrays.asList(
+                new Utf8String(did_),
+                new Utf8String("did:UAV:6333285578434256823"),
+                new Utf8String("did:UAV:6807135778434256823")
+        );
+        DynamicArray<Utf8String> didParam = new DynamicArray<>(Utf8String.class, didArray.toArray(new Utf8String[0]));
+
+        // 构造参数列表
+        List<Object> params = Arrays.asList(
+                new Utf8String(gdid_),
+                new Utf8String(did_),
+                pkListParam,    // bytes[]
+                serverParam,    // string[]
+                didParam        // string[]
+        );
         // 调用HelloWorld合约，合约地址为helloWorldAddress， 调用函数名为『set』，函数参数类型为params
         TransactionResponse transactionResponse =
                 transactionProcessor.sendTransactionAndGetResponseByContractLoader(
@@ -121,6 +136,32 @@ public class GroupController {
                         params);
         Map<String, String> response = new HashMap<>();
         response.put("Function","registerGDID");
+        response.put("Status","success");
+        response.put("transactionResponse",transactionResponse.getEvents());
+        response.put("info",transactionResponse.toString());
+        return ResponseEntity.ok(response);
+
+
+    }
+
+    @GetMapping("/g3")
+    public ResponseEntity<Map<String, String>> g3() throws Exception {
+
+        String gdid_ ="did:group:6333285578434256823";
+
+        List<Object> params = new ArrayList<>();
+        params.add(gdid_);
+
+
+        // 调用HelloWorld合约，合约地址为helloWorldAddress， 调用函数名为『set』，函数参数类型为params
+        TransactionResponse transactionResponse =
+                transactionProcessor.sendTransactionAndGetResponseByContractLoader(
+                        "GDIDRegistry",
+                        gdidRegistryContractAddress,
+                        "getGDIDDocument",
+                        params);
+        Map<String, String> response = new HashMap<>();
+        response.put("Function","getGDIDDocument");
         response.put("Status","success");
         response.put("transactionResponse",transactionResponse.getEvents());
         response.put("info",transactionResponse.toString());

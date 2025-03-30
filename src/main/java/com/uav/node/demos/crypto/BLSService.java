@@ -30,8 +30,8 @@ public class BLSService {
         for (Map.Entry<Integer, ECP> entry : partialSigs.entrySet()){
             signers.add(entry.getKey());
         }
-        System.out.println("partialSigs "+ partialSigs);
-        System.out.println("signers "+ signers);
+//        System.out.println("partialSigs "+ partialSigs);
+//        System.out.println("signers "+ signers);
 
         ECP aggregatedSig = new ECP();
         aggregatedSig.inf();
@@ -41,9 +41,9 @@ public class BLSService {
             BIG coeff = computeLagrangeCoeff(signers, signerId, q);
             ECP scaled = sig.mul(coeff);
             scaled.affine();
-            System.out.println("signerId "+ signerId);
-            System.out.println("coeff "+ coeff);
-            System.out.println("scaled "+ scaled);
+//            System.out.println("signerId "+ signerId);
+//            System.out.println("coeff "+ coeff);
+//            System.out.println("scaled "+ scaled);
             aggregatedSig.add(scaled);
             aggregatedSig.affine();
         }
@@ -69,11 +69,11 @@ public class BLSService {
         }
 
         BIG denomInv = modinv(denominator,order);
-        // 打印中间值（调试用）
-        System.out.println("signer id: " + j );
-        System.out.println("分子: " + numerator );
-        System.out.println("分母: " + denominator );
-        System.out.println("分母模逆: " + denomInv );
+//        // 打印中间值（调试用）
+//        System.out.println("signer id: " + j );
+//        System.out.println("分子: " + numerator );
+//        System.out.println("分母: " + denominator );
+//        System.out.println("分母模逆: " + denomInv );
         return BIG.modmul(numerator, denomInv, order);
     }
 
