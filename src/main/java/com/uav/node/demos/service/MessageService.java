@@ -56,8 +56,8 @@ public class MessageService {
 
                     BIG sk = dkgService.computePrivateKey(skshares);
                     cryptoBean.setSk_i(sk);
-                    logger.info("node {} calculate sub key...",config.getOwnerId());
-                    logger.info("sk shares:+\n {}",cryptoBean.getSkshares());
+                    logger.info("sk shares");
+                    logger.info(cryptoBean.getSkshares().toString());
                     logger.info("node {} generates sub key {} ",config.getOwnerId(),sk);
                 }
                 break;
@@ -95,10 +95,12 @@ public class MessageService {
                   partialSigs.put(from,sig_i);
                   cryptoBean.setPartialSigs(partialSigs);
                 if(partialSigs.size()==config.getThreshold()+1) {
-                    logger.info("node {} calculate agg sig...",config.getOwnerId());
-                    ECP agg = blsService.aggregatedSignatures(partialSigs);
-                    logger.info("node {} generates agg sig {} ",config.getOwnerId(),agg);
 
+                    ECP agg = blsService.aggregatedSignatures(partialSigs);
+                    logger.info("node {} calculate agg sig...",config.getOwnerId());
+                    logger.info("partialSigs");
+                    logger.info(String.valueOf(cryptoBean.getPartialSigs()));
+                    logger.info("node {} generates agg sig {} ",config.getOwnerId(),agg);
                     logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
                     gdidService.sendRRToSc(agg);
 

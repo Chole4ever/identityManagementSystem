@@ -47,7 +47,7 @@ public class GDIDService {
     }
     public void launchGdidRR() throws Exception {
         logger.info("node "+config.getOwnerId()+" launches GDID doc registered...");
-        String gdid = generateDID("whatever");
+        String gdid = generateDID("whatever111");
         config.setGdid(gdid);
 
         List<String> didLists = config.getDidLists();
@@ -71,7 +71,6 @@ public class GDIDService {
     public void sendRRToSc(ECP agg) throws TransactionBaseException, ContractCodecException, IOException {
 
         List<String> didLists = config.getDidLists();
-        String leaderdid = didLists.get(config.getLeaderId());
 
         byte[] pkbytes = new byte[192];
         cryptoBean.getGroupPubKey().toBytes(pkbytes);
@@ -79,9 +78,9 @@ public class GDIDService {
         byte[] aggbytes = new byte[97];
         agg.toBytes(aggbytes,false);
         List<String> serverList = new ArrayList<>();
-        serverList.add("rescue");serverList.add("transport");serverList.add("monitor");
+        serverList.add("Agriculture");serverList.add("Logistics");serverList.add("Environmental Monitoring");
 
-        smartContractService.registerGDID(config.getGdid(),leaderdid,pkbytes,serverList,didLists,aggbytes);
+        smartContractService.registerGDID(config.getGdid(),pkbytes,serverList,didLists,aggbytes);
     }
 
 

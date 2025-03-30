@@ -17,6 +17,7 @@ import java.util.List;
 public class GlobalConfig {
     int ownerId;
     int leaderId;
+    String did;
     String gdid;
     List<Integer> peerIds;
     int broadcastPort;
@@ -37,6 +38,8 @@ public class GlobalConfig {
     {
         GlobalConfig config = new GlobalConfig();
         config.setOwnerId(ownerId);
+        config.setDid(did);
+        config.setGdid(gdid);
         config.setLeaderId(leaderId);
         config.setPeerIds(peerIds);
         config.setBroadcastPort(broadcastPort);

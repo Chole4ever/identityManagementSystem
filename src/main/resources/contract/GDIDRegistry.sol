@@ -18,18 +18,17 @@ contract GDIDRegistry {
 
     // 事件参数调整为匹配类型和顺序
     event GDIDRegistered(
-        string indexed gdid,
-        string did,
-        bytes[] pkList,
+        string gdid,
+        bytes[] publicKeys,
         string[] serviceList,
         string[] didList,
-        uint256 timestamp,
+        uint created,
         address owner,
-        uint256 seq
+        uint seq
     );
 
     event GDIDDocumentUpdated(
-        string indexed gdid,
+        string gdid,
         bytes[] publicKeys,
         string[] serviceList,
         string[] didList,
@@ -40,7 +39,6 @@ contract GDIDRegistry {
     // 注册GDID
     function registerGDID(
         string memory gdid_,
-        string memory did_,
         bytes[] memory pkList_,
         string[] memory serverList_,
         string[] memory didLists_
@@ -62,7 +60,6 @@ contract GDIDRegistry {
 
         emit GDIDRegistered(
             gdid_,
-            did_,
             pkList_,
             serverList_,
             didLists_,

@@ -20,10 +20,7 @@ import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionBaseExceptio
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -54,24 +51,6 @@ public class GroupController {
 
     @PostMapping("//GDIDCreatioin")
     public ResponseEntity<Map<String, String>> updateDDO(@RequestBody GDDO gddo) throws IOException, TransactionBaseException, ContractCodecException {
-
-
-//        Gto gto = GDIDService.getGto(gddo);
-//
-//        List<Object> params = new ArrayList<>();
-//
-//        params.add(gto.getAgg());
-//        params.add(gddo.getLeaderdid());
-//        params.add(gto.getPk());
-//        params.add(gddo.getServiceList());
-//        params.add(gddo.getDidList());
-//
-//        TransactionResponse transactionResponse =
-//                transactionProcessor.sendTransactionAndGetResponseByContractLoader(
-//                        "GDIDRegistry",
-//                        didRegistryContractAddress,
-//                        "registerGDID",
-//                        params);
         Map<String, String> response = new HashMap<>();
         response.put("Function","registerGDID");
         response.put("Status","success");
@@ -80,10 +59,7 @@ public class GroupController {
 
     @GetMapping("/deployGDIDRegistry")
     public ResponseEntity<Map<String, String>> deployGDIDRegistry() throws ContractException {
-
-
         GDIDRegistry gdidRegistry = GDIDRegistry.deploy(client, cryptoKeyPair);
-
         Map<String, String> response = new HashMap<>();
         response.put("Contract",gdidRegistry.getContractAddress());
         response.put("blockNumber", String.valueOf(client.getBlockNumber()));
@@ -92,66 +68,15 @@ public class GroupController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/g2")
-    public ResponseEntity<Map<String, String>> g2() throws Exception {
+    //did:group:1739218670843064809
 
-        String gdid_ ="did:group:6333285578434256823";
-        String did_ ="did:UAV:979185578434256823";
+    @PostMapping("/findGDID")
+    public ResponseEntity<Map<String, String>> findGDID( @RequestParam("did") String did) throws IOException, TransactionBaseException, ContractCodecException {
 
-        // 构造bytes[]参数
-        String pk = "7142513692128887312957366097124764110363121271150334492810673144269002981787722838129250989787910354441465084994276682272592145092043385028452561113389658";
-        byte[] pkList = pk.getBytes();
-        DynamicBytes[] pkBytesArray = new DynamicBytes[]{ new DynamicBytes(pkList) };
-        DynamicArray<DynamicBytes> pkListParam = new DynamicArray<>(DynamicBytes.class, pkBytesArray);
-
-        // 构造serverList（string[]）
-        List<Utf8String> serverArray = Arrays.asList(
-                new Utf8String("rescue"),
-                new Utf8String("transport")
-        );
-        DynamicArray<Utf8String> serverParam = new DynamicArray<>(Utf8String.class, serverArray.toArray(new Utf8String[0]));
-
-        // 构造didLists（string[]）
-        List<Utf8String> didArray = Arrays.asList(
-                new Utf8String(did_),
-                new Utf8String("did:UAV:6333285578434256823"),
-                new Utf8String("did:UAV:6807135778434256823")
-        );
-        DynamicArray<Utf8String> didParam = new DynamicArray<>(Utf8String.class, didArray.toArray(new Utf8String[0]));
-
-        // 构造参数列表
-        List<Object> params = Arrays.asList(
-                new Utf8String(gdid_),
-                new Utf8String(did_),
-                pkListParam,    // bytes[]
-                serverParam,    // string[]
-                didParam        // string[]
-        );
-        // 调用HelloWorld合约，合约地址为helloWorldAddress， 调用函数名为『set』，函数参数类型为params
-        TransactionResponse transactionResponse =
-                transactionProcessor.sendTransactionAndGetResponseByContractLoader(
-                        "GDIDRegistry",
-                        gdidRegistryContractAddress,
-                        "registerGDID",
-                        params);
-        Map<String, String> response = new HashMap<>();
-        response.put("Function","registerGDID");
-        response.put("Status","success");
-        response.put("transactionResponse",transactionResponse.getEvents());
-        response.put("info",transactionResponse.toString());
-        return ResponseEntity.ok(response);
-
-
-    }
-
-    @GetMapping("/g3")
-    public ResponseEntity<Map<String, String>> g3() throws Exception {
-
-        String gdid_ ="did:group:6333285578434256823";
-
+        // 创建调用交易函数的参数
+        //string memory did, string[] memory publicKeys, string[] memory serviceList
         List<Object> params = new ArrayList<>();
-        params.add(gdid_);
-
+        params.add(did);
 
         // 调用HelloWorld合约，合约地址为helloWorldAddress， 调用函数名为『set』，函数参数类型为params
         TransactionResponse transactionResponse =
@@ -160,15 +85,24 @@ public class GroupController {
                         gdidRegistryContractAddress,
                         "getGDIDDocument",
                         params);
-        Map<String, String> response = new HashMap<>();
-        response.put("Function","getGDIDDocument");
-        response.put("Status","success");
-        response.put("transactionResponse",transactionResponse.getEvents());
-        response.put("info",transactionResponse.toString());
+
+        List<Object> list =  transactionResponse.getReturnObject();
+
+        // 假设你有一个结构化的 Map 或自定义类
+        Map<String, String > response = new HashMap<>();
+
+        response.put("Function", "getGDIDDocument");
+        response.put("GDID", (String) list.get(0));
+        response.put("PublicKeys", String.valueOf(list.get(2)));
+        response.put("ServerLists", String.valueOf(list.get(3)));
+        response.put("DidLists", String.valueOf(list.get(4)));
+        response.put("seq", String.valueOf(list.get(5)));
+        response.put("created", String.valueOf(list.get(6)));
+        response.put("updated", String.valueOf(list.get(7)));
+
         return ResponseEntity.ok(response);
-
-
     }
+
 
 
 }

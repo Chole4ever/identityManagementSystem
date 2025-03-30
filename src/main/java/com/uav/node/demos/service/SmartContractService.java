@@ -47,36 +47,32 @@ public class SmartContractService {
         BcosSDK sdk = fiscoBcos.getBcosSDK();
         client = sdk.getClient("group0");
         cryptoKeyPair = client.getCryptoSuite().getCryptoKeyPair();
-//        transactionProcessor =
-//                TransactionProcessorFactory.createAssembleTransactionProcessor
-//                        (client, cryptoKeyPair,
-//                                "src/main/resources/abi/DIDRegistry.abi",
-//                                "src/main/resources/bin/DIDRegistry.bin");
     }
 
 
-    public void registerGDID(String gdid, String leaderdid, byte[] pkList, List<String> serverList, List<String> didLists, byte[] aggr) throws TransactionBaseException, ContractCodecException, IOException {
-        logger.info("preparing registerGDID params for smart contract...");
+    public void registerGDID(String gdid, byte[] pkList, List<String> serverList, List<String> didLists, byte[] aggr) throws TransactionBaseException, ContractCodecException, IOException {
+
         AssembleTransactionProcessor transactionProcessor =
                 TransactionProcessorFactory.createAssembleTransactionProcessor
                         (client, cryptoKeyPair,
                                 "src/main/resources/abi/GDIDRegistry.abi",
                                 "src/main/resources/bin/GDIDRegistry.bin");
 
-        List<Object> params = wrapParams(gdid,leaderdid,pkList,serverList,didLists);
-
+        List<Object> params = wrapParams(gdid,pkList,serverList,didLists);
+        logger.info("preparing registerGDID params {} for smart contract...",params);
         TransactionResponse transactionResponse =
                 transactionProcessor.sendTransactionAndGetResponseByContractLoader(
                         "GDIDRegistry",
                         gdidRegistryContractAddress,
                         "registerGDID",
                         params);
-
-        logger.info("Group DID generation finished\n");
+        logger.info(transactionResponse.getReceiptMessages());
+        logger.info(transactionResponse.getEvents());
+        logger.info("Group DID generation finished.");
         logger.info(transactionResponse.toString());
     }
 
-    private static List<Object> wrapParams(String gdid_,String did_,byte[] pkList,List<String> servers,List<String> dids)
+    private static List<Object> wrapParams(String gdid_,byte[] pkList,List<String> servers,List<String> dids)
     {
 
         DynamicBytes[] pkBytesArray = new DynamicBytes[]{ new DynamicBytes(pkList) };
@@ -101,7 +97,6 @@ public class SmartContractService {
         // 构造参数列表
         return Arrays.asList(
                 new Utf8String(gdid_),
-                new Utf8String(did_),
                 pkListParam,    // bytes[]
                 serverParam,    // string[]
                 didParam        // string[]
