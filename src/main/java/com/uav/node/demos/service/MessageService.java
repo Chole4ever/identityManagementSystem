@@ -53,9 +53,11 @@ public class MessageService {
                 skshares.add(value);
                 cryptoBean.setSkshares(skshares);
                 if(skshares.size()==config.getCount()) {
-                    logger.info("node {} calculate sub key...",config.getOwnerId());
+
                     BIG sk = dkgService.computePrivateKey(skshares);
                     cryptoBean.setSk_i(sk);
+                    logger.info("node {} calculate sub key...",config.getOwnerId());
+                    logger.info("sk shares:+\n {}",cryptoBean.getSkshares());
                     logger.info("node {} generates sub key {} ",config.getOwnerId(),sk);
                 }
                 break;
@@ -66,8 +68,9 @@ public class MessageService {
                 pkshares.add(ecp2);
                 cryptoBean.setPkshares(pkshares);
                 if(pkshares.size()==config.getCount()) {
-                    logger.info("node {} calculate PK key...",config.getOwnerId());
                     ECP2 gpk = dkgService.computeGroupPublicKey(pkshares);
+                    logger.info("node {} calculate PK key...",config.getOwnerId());
+                    logger.info("Pk shares: {}",cryptoBean.getPkshares().toString());
                     logger.info("Group PK key: {}",gpk.toString());
                     gdidService.launchGdidRR();
                 }

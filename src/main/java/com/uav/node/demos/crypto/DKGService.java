@@ -92,7 +92,6 @@ public class DKGService {
     }
     public ECP2 computeGroupPublicKey(List<ECP2> publicCoeffs)
     {
-        logger.info("publicCoeffs"+publicCoeffs);
         ECP2 groupPubKey = new ECP2();
         groupPubKey.inf();
         for (ECP2 p : publicCoeffs) {
