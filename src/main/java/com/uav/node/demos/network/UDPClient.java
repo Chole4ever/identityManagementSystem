@@ -32,10 +32,15 @@ public class UDPClient {
                 data, data.length, address, 44445);
         DatagramPacket packet3 = new DatagramPacket(
                 data, data.length, address, 44446);
-
+        DatagramPacket packet4 = new DatagramPacket(
+                data, data.length, address, 44447);
+        DatagramPacket packet5 = new DatagramPacket(
+                data, data.length, address, 44448);
         socket.send(packet1);
         socket.send(packet2);
         socket.send(packet3);
+        socket.send(packet4);
+        socket.send(packet5);
 
         socket.close();
     }
