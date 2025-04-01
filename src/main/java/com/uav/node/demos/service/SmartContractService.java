@@ -2,6 +2,8 @@ package com.uav.node.demos.service;
 
 import com.uav.node.demos.config.FiscoBcos;
 import com.uav.node.demos.config.GlobalConfig;
+import com.uav.node.demos.model.DDO;
+import com.uav.node.demos.model.GDDO;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.ContractCodecException;
@@ -22,9 +24,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.uav.node.demos.model.GDDO.splitDIDList;
 
 
 @Service
@@ -48,6 +52,72 @@ public class SmartContractService {
         client = sdk.getClient("group0");
         cryptoKeyPair = client.getCryptoSuite().getCryptoKeyPair();
     }
+
+    public DDO findDID(String did) throws IOException, TransactionBaseException, ContractCodecException {
+        AssembleTransactionProcessor transactionProcessor =
+                TransactionProcessorFactory.createAssembleTransactionProcessor
+                        (client, cryptoKeyPair,
+                                "src/main/resources/abi/DIDRegistry.abi",
+                                "src/main/resources/bin/DIDRegistry.bin");
+
+        List<Object> params = new ArrayList<>();
+        params.add(did);
+
+        TransactionResponse transactionResponse =
+                transactionProcessor.sendTransactionAndGetResponseByContractLoader(
+                        "DIDRegistry",
+                        didRegistryContractAddress,
+                        "getDIDDocument",
+                        params);
+        List<Object> list =  transactionResponse.getReturnObject();
+        DDO ddo = new DDO();
+        String did_ = (String) list.get(0);
+        String gdid = (String) list.get(1);
+        String PublicKeys = (String) list.get(2);
+        String ServerLists = (String) list.get(3);
+        ddo.setDid(did_);
+        ddo.setGdid(gdid);
+        ddo.setPublicKeys(new String[]{PublicKeys});
+        ddo.setServiceList(new String[]{ServerLists});
+        return ddo;
+    }
+
+    public GDDO findGDID(String did) throws IOException, TransactionBaseException, ContractCodecException {
+        AssembleTransactionProcessor transactionProcessor =
+                TransactionProcessorFactory.createAssembleTransactionProcessor
+                        (client, cryptoKeyPair,
+                                "src/main/resources/abi/GDIDRegistry.abi",
+                                "src/main/resources/bin/GDIDRegistry.bin");
+
+        List<Object> params = new ArrayList<>();
+        params.add(did);
+
+        TransactionResponse transactionResponse =
+                transactionProcessor.sendTransactionAndGetResponseByContractLoader(
+                        "DIDRegistry",
+                        didRegistryContractAddress,
+                        "getDIDDocument",
+                        params);
+        List<Object> list =  transactionResponse.getReturnObject();
+        GDDO gddo = new GDDO();
+
+        String gdid = (String) list.get(0);
+        String PublicKeys = (String) list.get(1);
+        String ServerLists = (String) list.get(2);
+        String DIDListsRaw = (String) list.get(3);
+        String[] DIDLists = splitDIDList(DIDListsRaw);
+
+        int seq = (int) list.get(4);
+
+        gddo.setGdid(gdid);
+        gddo.setPublicKeys(new String[]{PublicKeys});
+        gddo.setServiceList(new String[]{ServerLists});
+        gddo.setDidList(DIDLists);
+        gddo.setSeq(seq);
+        return gddo;
+    }
+
+
 
 
     public void registerGDID(String gdid, byte[] pkList, List<String> serverList, List<String> didLists, byte[] aggr) throws TransactionBaseException, ContractCodecException, IOException {

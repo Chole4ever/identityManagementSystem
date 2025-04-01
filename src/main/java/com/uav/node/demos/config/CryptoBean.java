@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.web3j.crypto.ECKeyPair;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -35,7 +36,10 @@ public class CryptoBean {
     private ECP2 pk_i;
     private ECP2 groupPubKey;
     private HashMap<Integer,ECP> partialSigs;
+    private HashMap<Integer,ECP> partialSigsForGVP;
     private byte[] metadata;
+
+    private ECKeyPair ecKeyPair;
 
     @PostConstruct
     public void init() {

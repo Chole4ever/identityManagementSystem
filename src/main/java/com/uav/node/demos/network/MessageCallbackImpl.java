@@ -2,6 +2,7 @@ package com.uav.node.demos.network;
 
 import com.uav.node.demos.config.GlobalConfig;
 import com.uav.node.demos.model.Message;
+import com.uav.node.demos.model.MessageDTO;
 import com.uav.node.demos.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,12 @@ public class MessageCallbackImpl implements MessageCallback {
     @Autowired
     MessageService messageService;
     @Override
-    public void onMessageReceived(byte[] m, InetAddress address) throws Exception {
+    public void onMessageReceived(byte[] m, InetAddress address,int port) throws Exception {
 
         Message message =  Message.fromByteArray(m);
         logger.info("node "+config.getOwnerId()+" received message from "+message.getFromId()+" "+message.toGood());
-        messageService.processMessage(message);
+        MessageDTO messageDTO = new MessageDTO(message,address,port);
+        messageService.processMessage(messageDTO);
 
     }
 }

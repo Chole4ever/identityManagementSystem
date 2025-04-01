@@ -6,6 +6,7 @@ import org.web3j.crypto.*;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.security.SignatureException;
+import java.util.Arrays;
 
 public class Secp256k {
 
@@ -49,6 +50,8 @@ public class Secp256k {
         return pubKey.equals(pubKeyRecovered);
     }
 
+
+
     // 主函数
     public static void main(String[] args) throws Exception {
         // 随机生成私钥
@@ -59,6 +62,7 @@ public class Secp256k {
         ECKeyPair keyPair = generateKeyPair(privKey);
         System.out.println("Public key: " + keyPair.getPublicKey().toString(16));
         System.out.println("Public key (compressed): " + compressPubKey(keyPair.getPublicKey()));
+
 
         // 签名操作
         String msg = "Message for signing";
@@ -75,4 +79,45 @@ public class Secp256k {
         boolean validSig = verifySignature(msg, signature, keyPair.getPublicKey());
         System.out.println("Signature valid? " + validSig);
     }
+
+    public static byte[] signatureDataToBytes(Sign.SignatureData signatureData) {
+        // 验证r/s长度符合预期
+        if (signatureData.getR().length != 32 || signatureData.getS().length != 32) {
+            throw new IllegalStateException("Invalid signature length: r="+signatureData.getR().length+" s="+signatureData.getS().length);
+        }
+
+        byte[] result = new byte[65];
+        result[0] = signatureData.getV(); // 第1字节是v
+        System.arraycopy(signatureData.getR(), 0, result, 1, 32);  // 第2-33字节是r
+        System.arraycopy(signatureData.getS(), 0, result, 33, 32); // 第34-65字节是s
+        return result;
+    }
+
+    // 从字节数组解码（必须严格65字节）
+    public static Sign.SignatureData signatureDataFromBytes(byte[] bytes) {
+        if (bytes.length != 65) {
+            throw new IllegalArgumentException(
+                    "Invalid encoded signature: length=" + bytes.length + " (expected 65)"
+            );
+        }
+
+        byte v = bytes[0];
+        byte[] r = Arrays.copyOfRange(bytes, 1, 33);  // 截取1-32字节
+        byte[] s = Arrays.copyOfRange(bytes, 33, 65); // 截取33-64字节
+
+        // 可选：二次验证长度
+        if (r.length != 32 || s.length != 32) {
+            throw new IllegalArgumentException("Corrupted data: r/s length invalid");
+        }
+
+        return new Sign.SignatureData(v, r, s);
+    }
+
+    // 新增辅助方法：获取标准化的v值（兼容EIP-155等）
+    public int getStandardV(Sign.SignatureData signatureData) {
+        // 将byte转为无符号int处理（避免负数问题）
+        return (signatureData.getV() & 0xFF);
+    }
+
+
 }

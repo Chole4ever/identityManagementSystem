@@ -62,4 +62,16 @@ public class UDPClient {
         socket.send(packet);
         socket.close();
     }
+    public void send(Message message, String ip,int port) throws IOException {
+        DatagramSocket socket = new DatagramSocket();
+
+        InetAddress address = new InetSocketAddress(ip,port).getAddress();
+
+        byte[] data = message.toByteArray();
+        DatagramPacket packet = new DatagramPacket(
+                data, data.length, address, port);
+
+        socket.send(packet);
+        socket.close();
+    }
 }
