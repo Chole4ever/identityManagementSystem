@@ -63,9 +63,9 @@ public class MessageService {
 
                     BIG sk = dkgService.computePrivateKey(skshares);
                     cryptoBean.setSk_i(sk);
-                    logger.info("节点收到的来自其他节点的子私钥份额：");
+                    logger.info("sk shares");
                     logger.info(cryptoBean.getSkshares().toString());
-                    logger.info("node {} 本地生成子私钥 {} ", config.getOwnerId(), sk);
+                    logger.info("node {} generates sub key {} ", config.getOwnerId(), sk);
                 }
                 break;
             case "SEND_PUB_KEY_SHARED":
@@ -76,10 +76,9 @@ public class MessageService {
                 cryptoBean.setPkshares(pkshares);
                 if (pkshares.size() == config.getCount()) {
                     ECP2 gpk = dkgService.computeGroupPublicKey(pkshares);
-                    logger.info("node {} 计算群组公钥...", config.getOwnerId());
-                    logger.info("群组公钥的子份额:");
-                    logger.info( cryptoBean.getPkshares().toString());
-                    logger.info("群组公钥: {}", gpk.toString());
+                    logger.info("node {} calculate PK key...", config.getOwnerId());
+                    logger.info("Pk shares: {}", cryptoBean.getPkshares().toString());
+                    logger.info("Group PK key: {}", gpk.toString());
                     gdidService.launchGdidRR();
                 }
                 break;
@@ -88,7 +87,7 @@ public class MessageService {
                 byte[] metadata = message.getValue();
                 cryptoBean.setMetadata(metadata);
                 ECP subSig = dkgService.signSig(metadata);
-                logger.info("node {} 本地生成子签名 {} ", config.getOwnerId(), subSig);
+                logger.info("node {} generates sub-sig {} ", config.getOwnerId(), subSig);
                 byte[] subSigbytes = new byte[97];
                 subSig.toBytes(subSigbytes, false);
                 Message m1 = new Message(config.getOwnerId(), "GDID_GENERATION_RESPONSE", subSigbytes);
@@ -105,11 +104,11 @@ public class MessageService {
                 if (partialSigs.size() == config.getThreshold() + 1) {
 
                     ECP agg = blsService.aggregatedSignatures(partialSigs);
-                    logger.info("node {} 计算聚合签名...", config.getOwnerId());
-                    logger.info("子签名集合：");
+                    logger.info("node {} calculate agg sig...", config.getOwnerId());
+                    logger.info("partialSigs");
                     logger.info(String.valueOf(cryptoBean.getPartialSigs()));
-                    logger.info("node {} 计算聚合签名 {} ", config.getOwnerId(), agg);
-                    logger.info("node {} 验证聚合签名, 结果：验证{} ", config.getOwnerId(), "正确");
+                    logger.info("node {} generates agg sig {} ", config.getOwnerId(), agg);
+                    logger.info("node {} verify aggregated sig, result is {} ", config.getOwnerId(), "true");
                     gdidService.sendRRToSc(agg);
 
 //                    if(verifySignature(cryptoBean.getGroupPubKey(),agg, cryptoBean.getMetadata()))

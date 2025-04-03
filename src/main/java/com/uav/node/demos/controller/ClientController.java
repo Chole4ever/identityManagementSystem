@@ -86,6 +86,9 @@ public class ClientController {
         return ResponseEntity.ok(response);
     }
 
+
+
+
     @PostMapping("/findDID")
     public ResponseEntity<Map<String, String>> findDID( @RequestParam("did") String did) throws IOException, TransactionBaseException, ContractCodecException {
 
@@ -161,7 +164,6 @@ public class ClientController {
             params.add(ddo.getGdid());
         params.add(ddo.getPublicKeys());
         params.add(ddo.getServiceList());
-
         // 调用HelloWorld合约，合约地址为helloWorldAddress， 调用函数名为『set』，函数参数类型为params
         TransactionResponse transactionResponse =
                 transactionProcessor.sendTransactionAndGetResponseByContractLoader(
@@ -178,59 +180,8 @@ public class ClientController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("batchRegisterDID")
-    public ResponseEntity<Map<String, Map<String, String>> > batchRegisterDID() throws NoSuchAlgorithmException, TransactionBaseException, ContractCodecException {
 
-        int num = 4;
-        Map<String, Map<String, String>> response = new HashMap<>();
 
-        for(int i=7;i<num+7;i++)
-        {
-            Map<String, String> uav = new HashMap<>();
-            ECKeyPair eccKeyPair = Secp256k.generateKeyPair();
-            String did = generateRandomDID("lalala"+i);
-
-            List<Object> params = new ArrayList<>();
-            params.add(did);
-            List<String> pkl = new ArrayList<>();
-            pkl.add(String.valueOf(eccKeyPair.getPublicKey()));
-            params.add(pkl);
-            List<String> serverl = new ArrayList<>();
-            serverl.add("Delivery");
-            serverl.add("Agricultural Monitoring");
-            params.add(serverl);
-            TransactionResponse transactionResponse =
-                    transactionProcessor.sendTransactionAndGetResponseByContractLoader(
-                            "DIDRegistry",
-                            didRegistryContractAddress,
-                            "registerDID",
-                            params);
-
-            uav.put("did", did);
-            uav.put("pk", String.valueOf(eccKeyPair.getPublicKey()));
-            uav.put("sk", String.valueOf(eccKeyPair.getPrivateKey()));
-            uav.put("response", transactionResponse.getEvents());
-            response.put("uav"+i, uav);
-        }
-
-        return ResponseEntity.ok(response);
-    }
-    public String generateRandomDID(String username
-    ) throws NoSuchAlgorithmException {
-
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hashBytes = digest.digest(username.getBytes());
-
-        long hashValue = 0;
-        for (int i = 0; i < 8; i++) {
-            hashValue = (hashValue << 8) | (hashBytes[i] & 0xFF);
-        }
-        if (hashValue < 0) {
-            hashValue = -hashValue;
-        }
-
-        return "did:UAV:"+hashValue;
-    }
 
 
 }

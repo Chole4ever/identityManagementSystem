@@ -56,11 +56,11 @@ public class Secp256k {
     public static void main(String[] args) throws Exception {
         // 随机生成私钥
         BigInteger privKey = generateRandomPrivKey();
-        System.out.println("Generated private key: " + privKey);
+        System.out.println("Generated private key: " + privKey.toString(16));
 
         // 生成密钥对
         ECKeyPair keyPair = generateKeyPair(privKey);
-        System.out.println("Public key: " + keyPair.getPublicKey());
+        System.out.println("Public key: " + keyPair.getPublicKey().toString(16));
         System.out.println("Public key (compressed): " + compressPubKey(keyPair.getPublicKey()));
 
 
