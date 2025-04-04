@@ -218,7 +218,7 @@ public class MessageService {
                 byte[] msgv =message.getValue();
                 String json = getDataAsString(msgv);
                 logger.info(groupName+"node {} receives Group Verifiable Credential {}", config.getOwnerId(),json);
-                logger.info("Group authentication finishes");
+                logger.info("Group authentication finishes ");
             default:
                 logger.info("Unknown message type: " + message.getCommand());
                 break;
