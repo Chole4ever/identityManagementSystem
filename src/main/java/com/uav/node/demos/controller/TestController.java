@@ -74,6 +74,12 @@ public class TestController {
         return ResponseEntity.ok("hello world!");
     }
 
+
+    @GetMapping("/storeSK")
+    public ResponseEntity<String> test4() throws Exception {
+        gdidService.storeSK();
+        return ResponseEntity.ok("hello world!");
+    }
     @GetMapping("/test2")
     public ResponseEntity<String> test2() throws Exception {
 

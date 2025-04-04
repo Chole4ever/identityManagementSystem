@@ -42,15 +42,10 @@ public class PersistStore {
 
     public static void main(String[] args) throws IOException {
         PersistStore persistStore = new PersistStore();
-        BIG b = new BIG(123);
-        byte[] bytes = new byte[48];
-        b.toBytes(bytes);
-        persistStore.wirteToFile("test","test",bytes);
-
-        byte[] ans = persistStore.loadFromFile("./keystore/test.json","test");
+        byte[] ans = persistStore.loadFromFile("./keystore/sk.json","sk");
         BIG bb = BIG.fromBytes(ans);
-        System.out.println(b);
         System.out.println(bb);
+
 
 
     }

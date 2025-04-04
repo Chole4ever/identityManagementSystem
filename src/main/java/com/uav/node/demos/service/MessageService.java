@@ -111,7 +111,6 @@ public class MessageService {
                     logger.info("node {} generates agg sig {} ", config.getOwnerId(), agg);
                     logger.info("node {} verify aggregated sig, result is {} ", config.getOwnerId(), "true");
                     gdidService.sendRRToSc(agg);
-                    gdidService.storeSK();
 //                    if(verifySignature(cryptoBean.getGroupPubKey(),agg, cryptoBean.getMetadata()))
 //                    {
 //                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
