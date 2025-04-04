@@ -151,7 +151,7 @@ public class MessageService {
             case "RequestGroupVP":
                 logger.info(groupName+"node {} sends request of preparing Group Verifiable Presentation...", config.getOwnerId());
                 authService.sendPrepareGroupVP();
-
+                break;
             case "PrepareGroupVP":
                 logger.info(groupName+"node {} prepares Group Verifiable Presentation...", config.getOwnerId());
 
