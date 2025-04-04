@@ -45,7 +45,8 @@ public class PersistStore {
         byte[] ans = persistStore.loadFromFile("./keystore/sk.json","sk");
         BIG bb = BIG.fromBytes(ans);
         System.out.println(bb);
-
+        //0000000000000000000000000000000045e88a2828bc217dcbf8f7e4b5fa871b3d80e184cdf40ba4571883d6717630bf
+        //0000000000000000000000000000000045e88a2828bc217dcbf8f7e4b5fa871b3d80e184cdf40ba4571883d6717630bf
 
 
     }

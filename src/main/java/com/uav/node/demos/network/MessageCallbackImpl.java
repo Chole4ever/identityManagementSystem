@@ -22,10 +22,15 @@ public class MessageCallbackImpl implements MessageCallback {
     @Override
     public void onMessageReceived(byte[] m, InetAddress address,int port) throws Exception {
 
-        Message message =  Message.fromByteArray(m);
-        logger.info("node "+config.getOwnerId()+" received message from "+message.getFromId()+" "+message.toGood());
-        MessageDTO messageDTO = new MessageDTO(message,address,port);
-        messageService.processMessage(messageDTO);
+       try {
+           Message message =  Message.fromByteArray(m);
+           logger.info("node "+config.getOwnerId()+" received message from "+message.getFromId()+" "+message.toGood());
+           MessageDTO messageDTO = new MessageDTO(message,address,port);
+           messageService.processMessage(messageDTO);
+       }catch (Exception e)
+       {
+           logger.info("onMessageReceived: {}",e.getMessage());
+       }
 
     }
 }
