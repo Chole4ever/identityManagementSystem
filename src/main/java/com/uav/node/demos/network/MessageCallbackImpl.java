@@ -23,7 +23,7 @@ public class MessageCallbackImpl implements MessageCallback {
     public void onMessageReceived(byte[] m, InetAddress address,int port) throws Exception {
 
         Message message =  Message.fromByteArray(m);
-        logger.info("node "+config.getOwnerId()+"收到来自："+message.getFromId()+" ，信息："+message.toGood());
+        logger.info("node "+config.getOwnerId()+" received message from "+message.getFromId()+" "+message.toGood());
         MessageDTO messageDTO = new MessageDTO(message,address,port);
         messageService.processMessage(messageDTO);
 
