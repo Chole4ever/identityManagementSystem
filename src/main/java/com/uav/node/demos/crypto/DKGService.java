@@ -89,16 +89,6 @@ public class DKGService {
             sk_i.add(share);
             sk_i.mod(q);
         }
-        byte[] big = new byte[48];
-        sk_i.toBytes(big);
-        PersistStore persistStore = new PersistStore();
-
-        try{
-            persistStore.wirteToFile("sk","sk",big);
-        }catch (IOException ioException)
-        {
-            logger.info("sk write to file fails {}",ioException.getMessage());
-        }
         return sk_i;
     }
     public ECP2 computeGroupPublicKey(List<ECP2> publicCoeffs)
