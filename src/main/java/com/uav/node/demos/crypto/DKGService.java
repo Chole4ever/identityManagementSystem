@@ -2,6 +2,7 @@ package com.uav.node.demos.crypto;
 
 import com.uav.node.demos.config.CryptoBean;
 import com.uav.node.demos.config.GlobalConfig;
+import com.uav.node.demos.util.PersistStore;
 import org.apache.milagro.amcl.BLS381.BIG;
 import org.apache.milagro.amcl.BLS381.ECP;
 import org.apache.milagro.amcl.BLS381.ECP2;
@@ -14,9 +15,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.security.MessageDigest;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DKGService {
@@ -81,13 +83,22 @@ public class DKGService {
         return sum;
     }
 
-    public BIG computePrivateKey(List<BIG> shares ) {
+    public BIG computePrivateKey(List<BIG> shares ) throws IOException {
         BIG sk_i = new BIG(0);
-        for (BIG share : shares){
+        for (BIG share : shares) {
             sk_i.add(share);
             sk_i.mod(q);
         }
+        byte[] big = new byte[48];
+        sk_i.toBytes(big);
+        PersistStore persistStore = new PersistStore();
 
+        try{
+            persistStore.wirteToFile("sk","sk",big);
+        }catch (IOException ioException)
+        {
+            logger.info("sk write to file fails {}",ioException.getMessage());
+        }
         return sk_i;
     }
     public ECP2 computeGroupPublicKey(List<ECP2> publicCoeffs)
