@@ -9,6 +9,7 @@ import com.uav.node.demos.model.Credential;
 import com.uav.node.demos.model.Message;
 import com.uav.node.demos.model.MessageDTO;
 import com.uav.node.demos.model.Presentation;
+import com.uav.node.demos.util.PersistStore;
 import org.apache.milagro.amcl.BLS381.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +111,6 @@ public class MessageService {
                     logger.info("node {} generates agg sig {} ", config.getOwnerId(), agg);
                     logger.info("node {} verify aggregated sig, result is {} ", config.getOwnerId(), "true");
                     gdidService.sendRRToSc(agg);
-
 //                    if(verifySignature(cryptoBean.getGroupPubKey(),agg, cryptoBean.getMetadata()))
 //                    {
 //                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
@@ -120,6 +120,14 @@ public class MessageService {
 //                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"false");
 //                    }
                 }
+
+                break;
+            case "storeSK":
+                BIG sk = cryptoBean.getSk_i();
+                byte[] bytes = new byte[48];
+                sk.toBytes(bytes);
+                PersistStore persistStore = new PersistStore();
+                persistStore.wirteToFile("sk","sk",bytes);
                 break;
             case "InitiateGroupAuth":
                 logger.info(groupName+"node {} receives auth group request ", config.getOwnerId());
@@ -218,7 +226,7 @@ public class MessageService {
                 byte[] msgv =message.getValue();
                 String json = getDataAsString(msgv);
                 logger.info(groupName+"node {} receives Group Verifiable Credential {}", config.getOwnerId(),json);
-                logger.info("Group authentication finishes");
+                logger.info("Group authentication finishes ");
             default:
                 logger.info("Unknown message type: " + message.getCommand());
                 break;

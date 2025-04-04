@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 @Service
 public class GDIDService {
@@ -47,7 +49,11 @@ public class GDIDService {
     }
     public void launchGdidRR() throws Exception {
         logger.info("node "+config.getOwnerId()+" launches GDID doc registered...");
+<<<<<<< HEAD
         String gdid = generateDID("GroupB");
+=======
+        String gdid = generateDID("whatever1110404112113" );
+>>>>>>> c67d66de15c45ead2b41914f626b1e4247402fc8
         config.setGdid(gdid);
 
         List<String> didLists = config.getDidLists();
@@ -162,6 +168,8 @@ public class GDIDService {
         num.toBytes(byteArray); // 使用BIG的toBytes方法填充数组
         return byteArray;
     }
-
-
+    public void storeSK() throws Exception {
+        Message message = new Message(config.getOwnerId(),"storeSK");
+        transportService.sendBroadcastMessage(message);
+    }
 }
