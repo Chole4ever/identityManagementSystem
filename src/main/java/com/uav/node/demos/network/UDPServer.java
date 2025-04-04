@@ -62,7 +62,7 @@ public class UDPServer {
                         // 可以选择丢弃或者分块处理
                         continue;
                     }
-                    callback.onMessageReceived(bytes, packet.getAddress());
+                    callback.onMessageReceived(bytes, packet.getAddress(),packet.getPort());
                 } catch (IOException e) {
                     logger.info(e.getMessage());
                     break;
@@ -86,7 +86,7 @@ public class UDPServer {
                         // 可以选择丢弃或者分块处理
                         continue;
                     }
-                    callback.onMessageReceived(bytes, packet.getAddress());
+                    callback.onMessageReceived(bytes, packet.getAddress(),packet.getPort());
                 } catch (IOException e) {
                     logger.info(String.valueOf(e.getCause()));
                     break;

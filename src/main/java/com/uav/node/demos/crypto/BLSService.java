@@ -77,7 +77,7 @@ public class BLSService {
         return BIG.modmul(numerator, denomInv, order);
     }
 
-    public static boolean verifySignature(ECP2 gpk,ECP sig,byte[] data){
+    public static boolean verifyBLSSignature(ECP2 gpk,ECP sig,byte[] data){
         ECP H_m = hashToG1(data);
         FP12 pair1 = PAIR.ate(gpk,H_m);
         FP12 pair1_final = PAIR.fexp(pair1);

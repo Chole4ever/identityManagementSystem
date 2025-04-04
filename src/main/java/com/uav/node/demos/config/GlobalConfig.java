@@ -17,8 +17,10 @@ import java.util.List;
 public class GlobalConfig {
     int ownerId;
     int leaderId;
+    String groupName;
     String did;
     String gdid;
+    String gcsdid;
     List<Integer> peerIds;
     int broadcastPort;
     List<String> peerIps;

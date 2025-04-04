@@ -27,15 +27,15 @@ public class UDPClient {
         byte[] data = message.toByteArray();
 
         DatagramPacket packet1 = new DatagramPacket(
-                data, data.length, address, 44444);
+                data, data.length, address, 54444);
         DatagramPacket packet2 = new DatagramPacket(
-                data, data.length, address, 44445);
+                data, data.length, address, 54445);
         DatagramPacket packet3 = new DatagramPacket(
-                data, data.length, address, 44446);
+                data, data.length, address, 54446);
         DatagramPacket packet4 = new DatagramPacket(
-                data, data.length, address, 44447);
+                data, data.length, address, 54447);
         DatagramPacket packet5 = new DatagramPacket(
-                data, data.length, address, 44448);
+                data, data.length, address, 54448);
         socket.send(packet1);
         socket.send(packet2);
         socket.send(packet3);
@@ -58,6 +58,18 @@ public class UDPClient {
         byte[] data = message.toByteArray();
         DatagramPacket packet = new DatagramPacket(
                 data, data.length, address, config.getPeerudpPorts().get(toId));
+
+        socket.send(packet);
+        socket.close();
+    }
+    public void send(Message message, String ip,int port) throws IOException {
+        DatagramSocket socket = new DatagramSocket();
+
+        InetAddress address = new InetSocketAddress(ip,port).getAddress();
+
+        byte[] data = message.toByteArray();
+        DatagramPacket packet = new DatagramPacket(
+                data, data.length, address, port);
 
         socket.send(packet);
         socket.close();

@@ -47,7 +47,7 @@ public class GDIDService {
     }
     public void launchGdidRR() throws Exception {
         logger.info("node "+config.getOwnerId()+" launches GDID doc registered...");
-        String gdid = generateDID("whatever111");
+        String gdid = generateDID("GroupB");
         config.setGdid(gdid);
 
         List<String> didLists = config.getDidLists();
