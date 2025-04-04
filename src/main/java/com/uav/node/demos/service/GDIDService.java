@@ -49,7 +49,7 @@ public class GDIDService {
     }
     public void launchGdidRR() throws Exception {
         logger.info("node "+config.getOwnerId()+" launches GDID doc registered...");
-        String gdid = generateDID("whatever1110404112113" );
+        String gdid = generateDID("groupB0404");
         config.setGdid(gdid);
 
         List<String> didLists = config.getDidLists();
