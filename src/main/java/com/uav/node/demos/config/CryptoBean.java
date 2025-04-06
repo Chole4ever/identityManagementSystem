@@ -46,17 +46,22 @@ public class CryptoBean {
     private ECKeyPair ecKeyPair;
 
     @PostConstruct
-    public void init() {
+    public void init() throws IOException {
         threshold = config.getThreshold();
         n = config.count;
         skshares = new ArrayList<>();
         pkshares = new ArrayList<>();
         partialSigs = new HashMap<>();
 
-        BigInteger pri ;
-        BigInteger pub ;
 
-   //     ecKeyPair= new ECKeyPair(pri,pub);
+        PersistStore persistStore = new PersistStore();
+
+        byte[] bytes = persistStore.loadFromFile("keystore/ecKeyPair.json","pri");
+        byte[] bytes2 = persistStore.loadFromFile("keystore/ecKeyPair.json","pub");
+        BigInteger pri  = new BigInteger(bytes);
+        BigInteger pub  = new BigInteger(bytes2);
+
+        ecKeyPair= new ECKeyPair(pri,pub);
 
     }
 
