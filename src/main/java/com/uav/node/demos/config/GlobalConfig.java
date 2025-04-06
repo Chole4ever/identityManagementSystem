@@ -32,7 +32,7 @@ public class GlobalConfig {
     int threshold;
     int count;
     GDDO gddo;
-    int authIp;
+    String authIp;
     int authPort;
 
     @Bean

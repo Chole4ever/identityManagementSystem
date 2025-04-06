@@ -62,8 +62,14 @@ public class Claim {
         this.missionProfile = mission;
 
         // 添加服务器列表
-        this.serverList.add("10.0.0.1:8080");
-        this.serverList.add("10.0.0.2:8080");
+        this.serverList.add("10.0.0.1:6666");
+       // this.serverList.add("10.0.0.2:8080");
+
+        // 填充无人机成员
+        UAVMember leader = new UAVMember();
+        leader.did = "did:UAV:2022388442233997107";
+        leader.role = "Leader";
+        this.members.add(leader);
     }
 
     public static void main(String[] args) {

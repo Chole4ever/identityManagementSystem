@@ -7,6 +7,7 @@ import com.uav.node.demos.config.CredentialConfig;
 import com.uav.node.demos.config.CryptoBean;
 import com.uav.node.demos.config.GlobalConfig;
 import com.uav.node.demos.model.*;
+import com.uav.node.demos.util.JsonBytesConverter;
 import org.apache.milagro.amcl.BLS381.ECP;
 import org.fisco.bcos.sdk.v3.codec.ContractCodecException;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionBaseException;
@@ -70,23 +71,27 @@ public class AuthService {
         transportService.sendUDPMessage(message,inetAddress.getHostAddress(),messageDTO.getPort());
 
     }
-    public boolean verifyVP(MessageDTO messageDTO) throws IOException, TransactionBaseException, ContractCodecException, SignatureException {
+    public boolean verifyVP(MessageDTO messageDTO) {
         Message message = messageDTO.getMessage();
         byte[] presentationsBytes = message.getValue();
-        Presentation presentation = Presentation.fromJson(Credential.getDataAsString(presentationsBytes));
+        try{
+            Presentation presentation = JsonBytesConverter.fromBytes(presentationsBytes,Presentation.class);
+            if(presentation.getType()==0) {
+                authSession.setCounterpartyLeaderDid(presentation.getHolder());//保存context
+            }
+            else if(presentation.getType()==1){
+                authSession.setCounterpartyGroupGdid(presentation.getHolder());//保存context
+            }
 
-        if(presentation.getType()==0) {
-            authSession.setCounterpartyLeaderDid(presentation.getHolder());//保存context
-        }
-        else if(presentation.getType()==1){
-            authSession.setCounterpartyGroupGdid(presentation.getHolder());//保存context
-        }
-
-        if(credentialService.verifyPresentation(presentation))
+            if(credentialService.verifyPresentation(presentation))
+            {
+                return credentialService.verifyCredential(presentation.getCredentialSubject());
+            }else {
+                logger.info("verifyVP fails, vp: {}",presentation.toJson());
+            }
+        }catch (Exception e)
         {
-            return credentialService.verifyCredential(presentation.getCredentialSubject());
-        }else {
-            logger.info("verifyVP fails, vp: {}",presentation.toJson());
+            logger.info("verifyVP {}",e.getMessage());
         }
         return false;
 

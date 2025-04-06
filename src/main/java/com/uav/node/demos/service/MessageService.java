@@ -9,6 +9,7 @@ import com.uav.node.demos.model.Credential;
 import com.uav.node.demos.model.Message;
 import com.uav.node.demos.model.MessageDTO;
 import com.uav.node.demos.model.Presentation;
+import com.uav.node.demos.util.JsonBytesConverter;
 import com.uav.node.demos.util.PersistStore;
 import org.apache.milagro.amcl.BLS381.*;
 import org.slf4j.Logger;
@@ -20,9 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
-
-import static com.uav.node.demos.model.Presentation.getDataAsString;
-
 
 @Service
 public class MessageService {
@@ -225,9 +223,15 @@ public class MessageService {
                 break;
             case "IssueGroupCredential":
                 byte[] msgv =message.getValue();
-                String json = getDataAsString(msgv);
-                logger.info(groupName+"node {} receives Group Verifiable Credential {}", config.getOwnerId(),json);
-                logger.info("Group authentication finishes ");
+                try{
+                    Credential credential = JsonBytesConverter.fromBytes(msgv,Credential.class);
+                    logger.info(groupName+"node {} receives Group Verifiable Credential {}", config.getOwnerId(),credential.toJson());
+                    logger.info("Group authentication finishes ");
+                }catch (Exception e)
+                {
+                    logger.info("IssueGroupCredential {}",e.getMessage());
+                }
+
             default:
                 logger.info("Unknown message type: " + message.getCommand());
                 break;
