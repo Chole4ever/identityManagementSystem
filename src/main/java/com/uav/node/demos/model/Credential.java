@@ -13,7 +13,7 @@ import java.util.UUID;
 @Data
 public class Credential {
     private String id;
-    private int type;
+    private int type;// type0:单点,1群组
     private String issuer;
     private String holder;
     @JsonProperty("issuance_date")
@@ -26,30 +26,32 @@ public class Credential {
     public String toJson() throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(this);
     }
-    // 反序列化
-    public static Credential fromJson(String json) throws JsonProcessingException {
-        return new ObjectMapper().readValue(json, Credential.class);
-    }
 
-    public static String getDataAsString(byte[] data) {
-        return Base64.getEncoder().encodeToString(data);
-    }
+    public Credential()
+    {
+        String id = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16);
+        this.setId(id);
 
-    // String → byte[] (Base64)
-    public byte[] setDataFromString(String base64Str) {
-        return Base64.getDecoder().decode(base64Str);
+        Instant now = Instant.now();
+        this.setIssuanceDate(String.valueOf(now));
+
+        Instant futureDate = now.plus(Duration.ofDays(30));
+        this.setExpirationDate(String.valueOf(futureDate));
+
     }
 
     public static Credential wrapCredential(Claim claim, int type, long validDays, String issuerDID, String holderDID, byte[] proof) throws JsonProcessingException {
         Credential credential = new Credential();
-        String id = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16);
-        credential.setId(id);
+
         credential.setType(type);
         credential.setHolder(holderDID);
         credential.setIssuer(issuerDID);
+
         Instant now = Instant.now();
-        Instant futureDate = now.plus(Duration.ofDays(validDays));
         credential.setIssuanceDate(String.valueOf(now));
+
+        Instant futureDate = now.plus(Duration.ofDays(validDays));
+
         credential.setExpirationDate(String.valueOf(futureDate));
         credential.setClaim(claim);
         credential.setProof(proof);

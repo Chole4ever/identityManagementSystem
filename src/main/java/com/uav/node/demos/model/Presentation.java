@@ -52,19 +52,6 @@ public class Presentation {
     public String toJson() throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(this);
     }
-    // 反序列化
-    public static Presentation fromJson(String json) throws JsonProcessingException {
-        return new ObjectMapper().readValue(json, Presentation.class);
-    }
-
-    public static String getDataAsString(byte[] data) {
-        return Base64.getEncoder().encodeToString(data);
-    }
-
-    // String → byte[] (Base64)
-    public byte[] setDataFromString(String base64Str) {
-        return Base64.getDecoder().decode(base64Str);
-    }
 
     public void create(Credential leaderCredential, ECKeyPair ecKeyPair,String did) throws JsonProcessingException {
 

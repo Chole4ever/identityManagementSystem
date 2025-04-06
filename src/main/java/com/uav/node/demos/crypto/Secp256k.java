@@ -1,5 +1,6 @@
 package com.uav.node.demos.crypto;
 
+import com.uav.node.demos.model.Credential;
 import org.fisco.bcos.sdk.v3.utils.Numeric;
 import org.web3j.crypto.*;
 
@@ -50,19 +51,38 @@ public class Secp256k {
         return pubKey.equals(pubKeyRecovered);
     }
 
+    public static byte[] issueCredentialtoGetProof(BigInteger privKey,String msg) throws SignatureException {
+        ECKeyPair keyPair = generateKeyPair(privKey);
+        System.out.println("Private key: " + privKey);
+        System.out.println("Public key: " + keyPair.getPublicKey());
 
+        // 签名操作
+        byte[] msgHash = Hash.sha3(msg.getBytes());
+        Sign.SignatureData signature = signMessage(msgHash, keyPair);
+        System.out.println("Msg: " + msg);
+        System.out.println("Msg hash: " + Numeric.toHexString(msgHash));
+        System.out.printf("Signature: [v = %d, r = %s, s = %s]\n",
+                signature.getV() - 27,
+                Numeric.toHexString(signature.getR()),
+                Numeric.toHexString(signature.getS()));
+        // 验证签名
+        boolean validSig = verifySignature(msg, signature, keyPair.getPublicKey());
+        System.out.println("Signature valid? " + validSig);
+        if(validSig)
+        {
+            return signatureDataToBytes(signature);
+        }else return new byte[0];
+    }
 
     // 主函数
     public static void main(String[] args) throws Exception {
         // 随机生成私钥
-        BigInteger privKey = generateRandomPrivKey();
-        System.out.println("Generated private key: " + privKey.toString(16));
+        BigInteger privKey = new BigInteger("40779086466177057605767635656162985036307673144995806911493908486715184715114",10);
+        System.out.println("Generated private key: " + privKey);
 
         // 生成密钥对
         ECKeyPair keyPair = generateKeyPair(privKey);
-        System.out.println("Public key: " + keyPair.getPublicKey().toString(16));
-        System.out.println("Public key (compressed): " + compressPubKey(keyPair.getPublicKey()));
-
+        System.out.println("Public key: " + keyPair.getPublicKey());
 
         // 签名操作
         String msg = "Message for signing";
