@@ -19,4 +19,12 @@ public class AuthController {
         authService.authGroup();
         return "hello";
     }
+
+    @GetMapping("/storeGroupVC")
+    public String storeGroupVC() throws Exception {
+
+
+        return "hello";
+    }
+
 }

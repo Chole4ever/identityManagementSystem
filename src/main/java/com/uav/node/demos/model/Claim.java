@@ -52,7 +52,7 @@ public class Claim {
         SwarmTopology topology = new SwarmTopology();
         topology.networkType = "Mesh";
         topology.protocol = "OLSR";
-        topology.maxHop = 3;
+        topology.maxHop = 10;
         this.swarmTopology = topology;
 
         // 设置任务配置
@@ -63,6 +63,11 @@ public class Claim {
 
         // 添加服务器列表
         this.serverList.add("10.0.0.1:6666");
+        this.serverList.add("10.0.0.2:7777");
+        this.serverList.add("10.0.0.3:8888");
+        this.serverList.add("10.0.0.4:9999");
+        this.serverList.add("10.0.0.5:10000");
+
        // this.serverList.add("10.0.0.2:8080");
 
         // 填充无人机成员
@@ -70,6 +75,28 @@ public class Claim {
         leader.did = "did:UAV:2022388442233997107";
         leader.role = "Leader";
         this.members.add(leader);
+
+        UAVMember follower = new UAVMember();
+        follower.did = "did:UAV:5007456779067889161\n";
+        follower.role = "Follower";
+        this.members.add(follower);
+
+        UAVMember follower2 = new UAVMember();
+        follower.did = "did:UAV:1874660604459942339";
+        follower.role = "Follower";
+        this.members.add(follower2);
+
+        UAVMember follower3 = new UAVMember();
+        follower.did = "did:UAV:3313102635966818125";
+        follower.role = "Follower";
+        this.members.add(follower);
+
+        UAVMember follower4 = new UAVMember();
+        follower.did = "did:UAV:4203127509076539336";
+        follower.role = "Follower";
+        this.members.add(follower);
+
+
     }
 
     public static void main(String[] args) {
