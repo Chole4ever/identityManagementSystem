@@ -32,8 +32,8 @@ public class GlobalConfig {
     int threshold;
     int count;
     GDDO gddo;
-
-
+    int authIp;
+    int authPort;
 
     @Bean
     public GlobalConfig getConfig()
@@ -49,6 +49,8 @@ public class GlobalConfig {
         config.setPeerServerPorts(peerServerPorts);
         config.setDidRegistryContractAddress(didRegistryContractAddress);
         config.setGdidRegistryContractAddress(gdidRegistryContractAddress);
+        config.setAuthIp(authIp);
+        config.setAuthPort(authPort);
         return config;
     }
 }

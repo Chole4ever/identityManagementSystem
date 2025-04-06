@@ -15,7 +15,7 @@ public class AuthController {
 
     @PostMapping("/authGroup")
     public String findGDID(@RequestParam("ip") String ip, @RequestParam("port") int port) throws Exception {
-        authService.authGroup(ip, port);
+        authService.authGroup();
         return "hello";
     }
 }

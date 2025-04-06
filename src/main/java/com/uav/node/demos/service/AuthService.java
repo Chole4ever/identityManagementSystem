@@ -45,10 +45,10 @@ public class AuthService {
     SmartContractService smartContractService;
     Logger logger = LoggerFactory.getLogger(AuthService.class);
 
-    public void authGroup(String ip,int port) throws Exception {
+    public void authGroup() throws Exception {
         logger.info("node {} launch group authentication...",config.getOwnerId());
         Message message = new Message(config.getOwnerId(),"InitiateGroupAuth");
-        transportService.sendUDPMessage(message,ip,port);
+        transportService.sendUDPMessage(message, String.valueOf(config.getAuthIp()),config.getAuthPort());
     }
 
     public void requestLeaderVP(MessageDTO messageDTO) throws Exception {

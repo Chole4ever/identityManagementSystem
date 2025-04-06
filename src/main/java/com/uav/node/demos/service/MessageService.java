@@ -48,6 +48,7 @@ public class MessageService {
 
     public void processMessage(MessageDTO messageDTO) throws Exception {
         Message message = messageDTO.getMessage();
+        messageDTO.setPort(config.getAuthPort());
         String groupName = config.getGroupName()+"-";
         switch (message.getCommand()) {
             case "Launch_GDID_Generation":
