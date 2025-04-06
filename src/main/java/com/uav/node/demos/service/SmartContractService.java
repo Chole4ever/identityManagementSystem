@@ -103,18 +103,19 @@ public class SmartContractService {
         GDDO gddo = new GDDO();
 
         String gdid = (String) list.get(0);
-        String PublicKeys = (String) list.get(1);
-        String ServerLists = (String) list.get(2);
+        List<String> PublicKeys = (List<String>) list.get(1);
+        List<String> ServerLists = (List<String>) list.get(2);
         String DIDListsRaw = (String) list.get(3);
         String[] DIDLists = splitDIDList(DIDListsRaw);
 
         int seq = (int) list.get(4);
 
         gddo.setGdid(gdid);
-        gddo.setPublicKeys(new String[]{PublicKeys});
-        gddo.setServiceList(new String[]{ServerLists});
+        gddo.setPublicKeys(new String[]{PublicKeys.get(0)});
+        gddo.setServiceList(new String[]{ServerLists.get(0)});
         gddo.setDidList(DIDLists);
         gddo.setSeq(seq);
+        logger.info("findGDID :{} ,GDDO: {}",did,gddo);
         return gddo;
     }
 
