@@ -41,6 +41,7 @@ public class CryptoBean {
     private ECP2 groupPubKey;
     private HashMap<Integer,ECP> partialSigs;
     private HashMap<Integer,ECP> partialSigsForGVP;
+    private HashMap<Integer,ECP> partialSigsForGVC;
     private byte[] metadata;
 
     private ECKeyPair ecKeyPair;
@@ -53,6 +54,7 @@ public class CryptoBean {
         pkshares = new ArrayList<>();
         partialSigs = new HashMap<>();
         partialSigsForGVP = new HashMap<>();
+        partialSigsForGVC = new HashMap<>();
 
 
         PersistStore persistStore = new PersistStore();

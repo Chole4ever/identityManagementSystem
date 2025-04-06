@@ -206,7 +206,7 @@ public class MessageService {
                 byte[] subSignSig1 = message.getValue();
                 ECP subsig_1 = ECP.fromBytes(subSignSig1);
                 int from_1 = message.getFromId() + 1;
-                HashMap<Integer, ECP> partialSigs_1 = cryptoBean.getPartialSigsForGVP();
+                HashMap<Integer, ECP> partialSigs_1 = cryptoBean.getPartialSigsForGVC();
                 partialSigs_1.put(from_1, subsig_1);
                 cryptoBean.setPartialSigsForGVP(partialSigs_1);
                 if (partialSigs_1.size() == config.getThreshold() + 1) {
@@ -217,6 +217,7 @@ public class MessageService {
                     logger.info(String.valueOf(cryptoBean.getPartialSigs()));
                     logger.info(groupName+"node {} generates agg sig {} ", config.getOwnerId(), agg);
                     logger.info(groupName+"node {} verify aggregated sig, result is {} ", config.getOwnerId(), "true");
+
                     Credential credential = authService.sendGVC(agg,messageDTO);
                     logger.info(groupName+"node {} sends Group Verifiable Credential {}", config.getOwnerId(), credential.toJson());
                 }

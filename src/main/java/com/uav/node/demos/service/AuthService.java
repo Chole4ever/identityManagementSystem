@@ -178,6 +178,7 @@ public class AuthService {
         Message message = new Message(config.getOwnerId(),"IssueGroupCredential",gvc.toJson().getBytes());
 
         transportService.sendUDPMessage(message,ip,port);
+
         return gvc;
     }
 }
