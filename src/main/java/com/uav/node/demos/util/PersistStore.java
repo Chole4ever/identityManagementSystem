@@ -40,6 +40,17 @@ public class PersistStore {
         logger.info("{} persisted to: {}",name, storageDir.resolve(filename));
     }
 
+    public void wirteToFile(String dirPath, String name,Map<String,byte[]> data) throws IOException {
+        Path storageDir = Paths.get( "keystore");
+        Files.createDirectories(storageDir);
+        String filename = dirPath + ".json";
+        try (Writer writer = Files.newBufferedWriter(storageDir.resolve(filename))) {
+            new ObjectMapper().writeValue(writer, data);
+        }
+        logger.info("{} persisted to: {}",name, storageDir.resolve(filename));
+    }
+
+
     public static void main(String[] args) throws IOException {
         PersistStore persistStore = new PersistStore();
         byte[] ans = persistStore.loadFromFile("./keystore/sk.json","sk");
