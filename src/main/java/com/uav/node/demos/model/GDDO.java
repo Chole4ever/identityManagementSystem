@@ -3,6 +3,7 @@ package com.uav.node.demos.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,16 +15,16 @@ public class GDDO {
     private String gdid;
 
     @JsonProperty("publicKeys") // 字段名与JSON一致时可省略
-    private String[] publicKeys;
+    private byte[] publicKeys;
 
     @JsonProperty("service")  // 示例: 字段在JSON中叫"service"
     private String[] serviceList;
 
     @JsonProperty("didList")  //
-    private String[] didList;
+    private List<String> didList;
 
     @JsonProperty("seq")  //
-    private int seq;
+    private BigInteger seq;
     @JsonProperty("created")  // 无特殊需求可省略
     private int created;
     @JsonProperty("updated")

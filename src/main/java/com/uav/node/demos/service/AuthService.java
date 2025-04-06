@@ -91,7 +91,7 @@ public class AuthService {
             }
         }catch (Exception e)
         {
-            logger.info("verifyVP {}",e.getMessage());
+            logger.info("verifyVP {}",e.getCause().getMessage());
         }
         return false;
 
@@ -149,7 +149,7 @@ public class AuthService {
 
         String gdid = authSession.getCounterpartyGroupGdid();
         GDDO gddo = smartContractService.findGDID(gdid);
-        List<String> didList = Arrays.asList(gddo.getDidList());
+        List<String> didList = gddo.getDidList();
 
         for(String d:didList)
         {

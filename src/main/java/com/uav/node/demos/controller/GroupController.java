@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,7 +50,7 @@ public class GroupController {
     @Autowired
     GDIDService gdidService;
 
-    @PostMapping("//GDIDCreatioin")
+    @PostMapping("/GDIDCreatioin")
     public ResponseEntity<Map<String, String>> updateDDO(@RequestBody GDDO gddo) throws IOException, TransactionBaseException, ContractCodecException {
         Map<String, String> response = new HashMap<>();
         response.put("Function","registerGDID");
@@ -71,7 +72,7 @@ public class GroupController {
     //did:group:1739218670843064809
 
     @PostMapping("/findGDID")
-    public ResponseEntity<Map<String, String>> findGDID( @RequestParam("did") String did) throws IOException, TransactionBaseException, ContractCodecException {
+    public ResponseEntity<GDDO> findGDID( @RequestParam("did") String did) throws IOException, TransactionBaseException, ContractCodecException {
 
         // 创建调用交易函数的参数
         //string memory did, string[] memory publicKeys, string[] memory serviceList
@@ -89,18 +90,20 @@ public class GroupController {
         List<Object> list =  transactionResponse.getReturnObject();
 
         // 假设你有一个结构化的 Map 或自定义类
-        Map<String, String > response = new HashMap<>();
+        GDDO gddo = new GDDO();
 
-        response.put("Function", "getGDIDDocument");
-        response.put("GDID", (String) list.get(0));
-        response.put("PublicKeys", String.valueOf(list.get(2)));
-        response.put("ServerLists", String.valueOf(list.get(3)));
-        response.put("DidLists", String.valueOf(list.get(4)));
-        response.put("seq", String.valueOf(list.get(5)));
-        response.put("created", String.valueOf(list.get(6)));
-        response.put("updated", String.valueOf(list.get(7)));
+        String gdid = (String) list.get(0);
+        List<byte[]> PublicKeys = (List<byte[]>) list.get(1);
+        List<String> ServerLists = (List<String>) list.get(2);
+        List<String> DIDListsRaw = (List<String>) list.get(3);
+        BigInteger seq = (BigInteger) list.get(4);
 
-        return ResponseEntity.ok(response);
+        gddo.setGdid(gdid);
+        gddo.setPublicKeys(PublicKeys.get(0));
+        gddo.setServiceList(new String[]{ServerLists.get(0)});
+        gddo.setDidList(DIDListsRaw);
+        gddo.setSeq(seq);
+        return ResponseEntity.ok(gddo);
     }
 
 

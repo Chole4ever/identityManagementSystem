@@ -57,9 +57,8 @@ public class CredentialService {
         }else if(type==1)
         {
             GDDO gddo = smartContractService.findGDID(did);
-            String[] pkList = gddo.getPublicKeys();
-            byte[] bytes = pkList[0].getBytes();
-            ECP2 pk = ECP2.fromBytes(bytes);
+            byte[] pkList = gddo.getPublicKeys();
+            ECP2 pk = ECP2.fromBytes(pkList);
             ECP signatureData = ECP.fromBytes(proof);
 
             logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
@@ -101,9 +100,8 @@ public class CredentialService {
         }else{
 
             GDDO gddo = smartContractService.findGDID(did);
-            String[] pkList = gddo.getPublicKeys();
-            byte[] bytes = pkList[0].getBytes();
-            ECP2 pk = ECP2.fromBytes(bytes);
+            byte[] pkList = gddo.getPublicKeys();
+            ECP2 pk = ECP2.fromBytes(pkList);
             ECP signatureData = ECP.fromBytes(proof);
 
             logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());

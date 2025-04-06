@@ -175,7 +175,7 @@ public class MessageService {
                     ECP agg = blsService.aggregatedSignatures(partialSigs_);
                     logger.info(groupName+"node {} calculate agg sig...", config.getOwnerId());
                     logger.info("partialSigs");
-                    logger.info(String.valueOf(cryptoBean.getPartialSigs()));
+                    logger.info(String.valueOf(cryptoBean.getPartialSigsForGVP()));
                     logger.info(groupName+"node {} generates agg sig {} ", config.getOwnerId(), agg);
                     logger.info(groupName+"node {} verify aggregated sig, result is {} ", config.getOwnerId(), "true");
                     Presentation presentation = authService.sendGVP(agg,messageDTO);

@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.uav.node.demos.model.GDDO.splitDIDList;
 
 
 @Service
@@ -90,13 +89,14 @@ public class SmartContractService {
                                 "src/main/resources/abi/GDIDRegistry.abi",
                                 "src/main/resources/bin/GDIDRegistry.bin");
 
+
         List<Object> params = new ArrayList<>();
         params.add(did);
 
         TransactionResponse transactionResponse =
                 transactionProcessor.sendTransactionAndGetResponseByContractLoader(
                         "GDIDRegistry",
-                        didRegistryContractAddress,
+                        gdidRegistryContractAddress,
                         "getGDIDDocument",
                         params);
         List<Object> list =  transactionResponse.getReturnObject();
@@ -105,15 +105,13 @@ public class SmartContractService {
         String gdid = (String) list.get(0);
         List<String> PublicKeys = (List<String>) list.get(1);
         List<String> ServerLists = (List<String>) list.get(2);
-        String DIDListsRaw = (String) list.get(3);
-        String[] DIDLists = splitDIDList(DIDListsRaw);
-
-        int seq = (int) list.get(4);
+        List<String> DIDListsRaw = (List<String>) list.get(3);
+        BigInteger seq = (BigInteger) list.get(4);
 
         gddo.setGdid(gdid);
-        gddo.setPublicKeys(new String[]{PublicKeys.get(0)});
+
         gddo.setServiceList(new String[]{ServerLists.get(0)});
-        gddo.setDidList(DIDLists);
+        gddo.setDidList(DIDListsRaw);
         gddo.setSeq(seq);
         logger.info("findGDID :{} ,GDDO: {}",did,gddo);
         return gddo;
