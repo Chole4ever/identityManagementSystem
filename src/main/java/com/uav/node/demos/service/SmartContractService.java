@@ -73,12 +73,12 @@ public class SmartContractService {
         DDO ddo = new DDO();
         String did_ = (String) list.get(0);
         String gdid = (String) list.get(1);
-        String PublicKeys = (String) list.get(2);
-        String ServerLists = (String) list.get(3);
+        List<String> PublicKeys = (List<String>) list.get(2);
+        List<String> ServerLists = (List<String>) list.get(3);
         ddo.setDid(did_);
         ddo.setGdid(gdid);
-        ddo.setPublicKeys(new String[]{PublicKeys});
-        ddo.setServiceList(new String[]{ServerLists});
+        ddo.setPublicKeys(new String[]{PublicKeys.get(0)});
+        ddo.setServiceList(new String[]{ServerLists.get(0)});
         return ddo;
     }
 
