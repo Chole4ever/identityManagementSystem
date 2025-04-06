@@ -79,6 +79,7 @@ public class SmartContractService {
         ddo.setGdid(gdid);
         ddo.setPublicKeys(new String[]{PublicKeys.get(0)});
         ddo.setServiceList(new String[]{ServerLists.get(0)});
+        logger.info("findDID :{} ,DDO: {}",did,ddo);
         return ddo;
     }
 
