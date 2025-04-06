@@ -27,15 +27,15 @@ public class UDPClient {
         byte[] data = message.toByteArray();
 
         DatagramPacket packet1 = new DatagramPacket(
-                data, data.length, address, 54444);
+                data, data.length, address, 44444);
         DatagramPacket packet2 = new DatagramPacket(
-                data, data.length, address, 54445);
+                data, data.length, address, 44445);
         DatagramPacket packet3 = new DatagramPacket(
-                data, data.length, address, 54446);
+                data, data.length, address, 44446);
         DatagramPacket packet4 = new DatagramPacket(
-                data, data.length, address, 54447);
+                data, data.length, address, 44447);
         DatagramPacket packet5 = new DatagramPacket(
-                data, data.length, address, 54448);
+                data, data.length, address, 44448);
         socket.send(packet1);
         socket.send(packet2);
         socket.send(packet3);
