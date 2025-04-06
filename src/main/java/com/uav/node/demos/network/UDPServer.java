@@ -72,7 +72,7 @@ public class UDPServer {
             }
         });
         executorService.submit(() -> {
-            byte[] buffer = new byte[32768];
+            byte[] buffer = new byte[100000000];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             while (true) {

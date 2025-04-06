@@ -103,13 +103,13 @@ public class SmartContractService {
         GDDO gddo = new GDDO();
 
         String gdid = (String) list.get(0);
-        List<String> PublicKeys = (List<String>) list.get(1);
+        List<byte[]> PublicKeys = (List<byte[]>) list.get(1);
         List<String> ServerLists = (List<String>) list.get(2);
         List<String> DIDListsRaw = (List<String>) list.get(3);
         BigInteger seq = (BigInteger) list.get(4);
 
         gddo.setGdid(gdid);
-
+        gddo.setPublicKeys(PublicKeys.get(0));
         gddo.setServiceList(new String[]{ServerLists.get(0)});
         gddo.setDidList(DIDListsRaw);
         gddo.setSeq(seq);
