@@ -52,6 +52,7 @@ public class CryptoBean {
         skshares = new ArrayList<>();
         pkshares = new ArrayList<>();
         partialSigs = new HashMap<>();
+        partialSigsForGVP = new HashMap<>();
 
 
         PersistStore persistStore = new PersistStore();

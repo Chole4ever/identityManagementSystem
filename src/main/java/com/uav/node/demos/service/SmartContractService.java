@@ -95,9 +95,9 @@ public class SmartContractService {
 
         TransactionResponse transactionResponse =
                 transactionProcessor.sendTransactionAndGetResponseByContractLoader(
-                        "DIDRegistry",
+                        "GDIDRegistry",
                         didRegistryContractAddress,
-                        "getDIDDocument",
+                        "getGDIDDocument",
                         params);
         List<Object> list =  transactionResponse.getReturnObject();
         GDDO gddo = new GDDO();
