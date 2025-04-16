@@ -45,7 +45,8 @@ public class CredentialService {
             BigInteger pk = new BigInteger(bytes) ;
             Sign.SignatureData signatureData = signatureDataFromBytes(proof);
 
-            logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
+            String groupName = config.getGroupName()+"-";
+            logger.info(groupName+"node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
             return true;
 
 //            if(verifySignature(claim.toJson(),signatureData,pk)){

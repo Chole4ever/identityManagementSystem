@@ -32,12 +32,15 @@ public class TestController {
 
     @Autowired
     UDPClient udpClient;
+
+    //DIDG验证
     @GetMapping("/test")
     public ResponseEntity<String> test() throws Exception {
         gdidService.launchGDIDGeneration();
         return ResponseEntity.ok("hello world!");
     }
 
+    //本次SK存储
     @GetMapping("/storeSK")
     public ResponseEntity<String> test4() throws Exception {
         gdidService.storeSK();

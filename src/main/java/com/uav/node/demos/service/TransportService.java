@@ -28,6 +28,8 @@ public class TransportService {
     Logger logger = LoggerFactory.getLogger(TransportService.class);
     private static final HashMap<Integer,String> ipMaps = new HashMap<>();
 
+
+
     @PostConstruct
     public void init() {
 
@@ -39,7 +41,8 @@ public class TransportService {
 
     public void sendUDPMessage(Message message, int toId) throws Exception {
         try{
-            logger.info("node "+config.getOwnerId()+" send udp message to {}: {}",toId,message.toGood());
+            String groupName = config.getGroupName()+"-";
+            logger.info(groupName+"node "+config.getOwnerId()+" send udp message to {}:{}",toId,message.toGood());
             udpClient.send(message,toId);
         }catch (Exception e)
         {
@@ -49,7 +52,8 @@ public class TransportService {
     }
     public void sendUDPMessage(Message message,String ip, int port) throws Exception{
         try {
-            logger.info("node "+config.getOwnerId()+" send udp message to {}:{}: {}",ip,port,message.toGood());
+            String groupName = config.getGroupName()+"-";
+            logger.info(groupName+"node "+config.getOwnerId()+" send udp message to {}:{}:{}",ip,port,message.toGood());
             udpClient.send(message,ip,port);
         }catch (Exception e)
         {
@@ -59,7 +63,8 @@ public class TransportService {
     }
     public void sendBroadcastMessage(Message message) throws Exception {
         try {
-            logger.info("node "+config.getOwnerId()+" send broadcast message: "+message.toGood());
+            String groupName = config.getGroupName()+"-";
+            logger.info(groupName+"node "+config.getOwnerId()+" send broadcast message: "+message.toGood());
             udpClient.Broadcast(message);
         }catch (Exception e)
         {

@@ -14,6 +14,7 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
+    //bgas验证
     @GetMapping("/authGroup")
     public String findGDID() throws Exception {
         authService.authGroup();

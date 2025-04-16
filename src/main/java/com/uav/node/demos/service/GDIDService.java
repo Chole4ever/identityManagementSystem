@@ -137,10 +137,10 @@ public class GDIDService {
         transportService.sendUDPMessage(message,config.getLeaderId());
     }
     public void sendSubSKShares() throws Exception {
-        List<Integer> peerId = config.getPeerIds();
+        List<Integer> peerId = config.getPeerIds();//id +1
         for(int i=0;i<peerId.size();i++)
         {
-            BIG share = dkgService.getSharesById(peerId.get(i));
+            BIG share = dkgService.getSharesById(peerId.get(i)+1);
             Message message = new Message(config.getOwnerId(),"SEND_SUB_KEY_SHARED",bigToBytes(share));
             transportService.sendUDPMessage(message,i);
         }

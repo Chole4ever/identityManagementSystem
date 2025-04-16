@@ -130,6 +130,7 @@ public class MessageService {
                 break;
             case "InitiateGroupAuth":
                 logger.info(groupName+"node {} receives auth group request ", config.getOwnerId());
+                logger.info("-----------------进行领导节点双向认证---------------------------------");
                 authService.requestLeaderVP(messageDTO);
                 authService.sendLeaderVP(messageDTO);
                 break;
@@ -138,8 +139,10 @@ public class MessageService {
                 authService.sendLeaderVP(messageDTO);
                 break;
             case "SubmitLeaderVP":
+                logger.info("-----------------区块链查询DDO-----------------------------------");
                 boolean isValid = authService.verifyVP(messageDTO);
-
+                logger.info("-----------------单点身份认证成功-----------------------------------");
+                logger.info("-----------------进行群组身份认证-----------------------------------");
                 logger.info(groupName+"node {} verifies Leader verifiable presentation: {}", config.getOwnerId(), isValid);
                 if (isValid) {
                     logger.info(groupName+"node {} requests Group verifiable presentation...", config.getOwnerId());
@@ -148,15 +151,14 @@ public class MessageService {
                 }
                 break;
             case "RequestGroupVP":
+                logger.info("-----------------组内进行GVP生成签名收集-----------------------------------");
                 logger.info(groupName+"node {} sends request of preparing Group Verifiable Presentation...", config.getOwnerId());
                 authService.sendPrepareGroupVP();
                 break;
             case "PrepareGroupVP":
-                logger.info(groupName+"node {} prepares Group Verifiable Presentation...", config.getOwnerId());
-
-                byte[] messageValue = message.getValue();
+                 byte[] messageValue = message.getValue();
                 ECP signSig = dkgService.signSig(messageValue);
-                logger.info(groupName+"node {} generates sub-sig {} ", config.getOwnerId(), signSig);
+             //   logger.info(groupName+"node {} generates sub-sig {} ", config.getOwnerId(), signSig);
                 byte[] signSigBytes = new byte[97];
 
                 signSig.toBytes(signSigBytes, false);
@@ -174,19 +176,24 @@ public class MessageService {
 
                     ECP agg = blsService.aggregatedSignatures(partialSigs_);
                     logger.info(groupName+"node {} calculate agg sig...", config.getOwnerId());
-                    logger.info("partialSigs");
+                    logger.info("收集的子签名");
                     logger.info(String.valueOf(cryptoBean.getPartialSigsForGVP()));
                     logger.info(groupName+"node {} generates agg sig {} ", config.getOwnerId(), agg);
                     logger.info(groupName+"node {} verify aggregated sig, result is {} ", config.getOwnerId(), "true");
                     Presentation presentation = authService.sendGVP(agg,messageDTO);
+                    logger.info("-----------------GVP生成成功，发送给对方领导节点-----------------------------------");
                     logger.info(groupName+"node {} sends Group Verifiable Presentation {}", config.getOwnerId(), presentation.toJson());
                 }
                 break;
             case "FinalizeGroupVP":
+                logger.info("-----------------收到对方GVP，进行正确性验证-----------------------------------");
+                logger.info("-----------------向区块链查询GDDO-----------------------------------");
                 boolean isValid_ = authService.verifyVP(messageDTO);
+
                 logger.info(groupName+"node {} verifies Group Verifiable Presentation: {}", config.getOwnerId(), isValid_);
                 if (isValid_) {
                     logger.info(groupName+"node {} requests to authenticator committee for Group verifiable Credential Generation...", config.getOwnerId());
+                    logger.info("----------------GVP验证成功，进行GVC颁发-----------------------------------");
                     authService.requestAggregateSignatures(messageDTO);
                 }
                 break;
@@ -210,11 +217,11 @@ public class MessageService {
                 partialSigs_1.put(from_1, subsig_1);
                 cryptoBean.setPartialSigsForGVP(partialSigs_1);
                 if (partialSigs_1.size() == config.getThreshold() + 1) {
-
+                    logger.info("----------------组内进行GVC生成签名收集-----------------------------------");
                     ECP agg = blsService.aggregatedSignatures(partialSigs_1);
                     logger.info(groupName+"node {} calculate agg sig...", config.getOwnerId());
-                    logger.info("partialSigs");
-                    logger.info(String.valueOf(cryptoBean.getPartialSigs()));
+                    logger.info("收集到的子签名");
+                    logger.info(String.valueOf(cryptoBean.getPartialSigsForGVC()));
                     logger.info(groupName+"node {} generates agg sig {} ", config.getOwnerId(), agg);
                     logger.info(groupName+"node {} verify aggregated sig, result is {} ", config.getOwnerId(), "true");
 
@@ -225,9 +232,13 @@ public class MessageService {
             case "IssueGroupCredential":
                 byte[] msgv =message.getValue();
                 try{
+                    logger.info("----------------GVC接收-----------------------------------");
                     Credential credential = JsonBytesConverter.fromBytes(msgv,Credential.class);
-                    logger.info(groupName+"node {} receives Group Verifiable Credential {}", config.getOwnerId(),credential.toJson());
+                    logger.info(groupName+"node {} receives Group Verifiable Credential", config.getOwnerId());
+                    logger.info("----------------GVC信息-----------------------------------");
+                    logger.info(credential.toJson());
                     logger.info("Group authentication finishes ");
+                    logger.info("----------------群组认证结束-----------------------------------");
                 }catch (Exception e)
                 {
                     logger.info("IssueGroupCredential {}",e.getMessage());
