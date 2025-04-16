@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SignatureException;
 
+import static com.uav.node.demos.crypto.BLSService.verifyBLSSignature;
 import static com.uav.node.demos.crypto.Secp256k.*;
 
 @Service
@@ -46,14 +47,13 @@ public class CredentialService {
 
             String groupName = config.getGroupName()+"-";
             logger.info(groupName+"node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
-            return true;
 
-//            if(verifySignature(claim.toJson(),signatureData,pk)){
-//                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
-//                return true;
-//            }else{
-//                logger.info("node {} verifies credential false, credential {}",config.getOwnerId(),credential.toJson());
-//            }
+            if(verifySignature(claim.toJson(),signatureData,pk)){
+                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
+                return true;
+            }else{
+                logger.info("node {} verifies credential false, credential {}",config.getOwnerId(),credential.toJson());
+            }
         }else if(type==1)
         {
             GDDO gddo = smartContractService.findGDID(did);
@@ -62,15 +62,14 @@ public class CredentialService {
             ECP signatureData = ECP.fromBytes(proof);
 
             logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
-            return true;
 
-//            if(verifyBLSSignature(pk,signatureData,claim.toJson().getBytes()))
-//            {
-//                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
-//                return true;
-//            }else{
-//                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
-//            }
+            if(verifyBLSSignature(pk,signatureData,claim.toJson().getBytes()))
+            {
+                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
+                return true;
+            }else{
+                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
+            }
         }
 
         return false;
@@ -90,13 +89,12 @@ public class CredentialService {
             Sign.SignatureData signatureData = signatureDataFromBytes(proof);
 
             logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
-            return true;
-//            if(verifySignature(presentation.getCredentialSubject().toJson(),signatureData,pk)){
-//                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
-//                return true;
-//            }else{
-//                logger.info("node {} verifies credential false, credential {}",config.getOwnerId(),presentation.toJson());
-//            }
+            if(verifySignature(presentation.getCredentialSubject().toJson(),signatureData,pk)){
+                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
+                return true;
+            }else{
+                logger.info("node {} verifies credential false, credential {}",config.getOwnerId(),presentation.toJson());
+            }
         }else{
 
             GDDO gddo = smartContractService.findGDID(did);
@@ -105,15 +103,15 @@ public class CredentialService {
             ECP signatureData = ECP.fromBytes(proof);
 
             logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
-            return true;
-//            if(verifyBLSSignature(pk,signatureData,presentation.toJson().getBytes()))
-//            {
-//                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
-//                return true;
-//            }else{
-//                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
-//            }
+
+            if(verifyBLSSignature(pk,signatureData,presentation.toJson().getBytes()))
+            {
+                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
+                return true;
+            }else{
+                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
+            }
         }
-       // return false;
+       return false;
     }
 }
