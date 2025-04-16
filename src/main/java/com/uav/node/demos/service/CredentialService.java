@@ -33,7 +33,7 @@ public class CredentialService {
     Logger logger = LoggerFactory.getLogger(CredentialService.class);
 
     public boolean verifyCredential(Credential credential) throws IOException, TransactionBaseException, ContractCodecException, SignatureException {
-        String did = credential.getHolder();
+        String did = credential.getIssuer();
         int type = credential.getType();//type0:单点
         byte[] proof = credential.getProof();
         Claim claim = credential.getClaim();
@@ -41,18 +41,18 @@ public class CredentialService {
         {
             DDO ddo = smartContractService.findDID(did);
             String[] pkList = ddo.getPublicKeys();
-            byte[] bytes = pkList[0].getBytes();
-            BigInteger pk = new BigInteger(bytes) ;
+            String pkString = pkList[0];
+            BigInteger pk = new BigInteger(pkString) ;
             Sign.SignatureData signatureData = signatureDataFromBytes(proof);
 
             String groupName = config.getGroupName()+"-";
-            logger.info(groupName+"node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
+           // logger.info(groupName+"node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
 
             if(verifySignature(claim.toJson(),signatureData,pk)){
-                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
+                logger.info(groupName+"node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
                 return true;
             }else{
-                logger.info("node {} verifies credential false, credential {}",config.getOwnerId(),credential.toJson());
+                logger.info(groupName+"node {} verifies credential false, credential {}",config.getOwnerId(),credential.toJson());
             }
         }else if(type==1)
         {
@@ -61,7 +61,7 @@ public class CredentialService {
             ECP2 pk = ECP2.fromBytes(pkList);
             ECP signatureData = ECP.fromBytes(proof);
 
-            logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
+            // logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
 
             if(verifyBLSSignature(pk,signatureData,claim.toJson().getBytes()))
             {
@@ -88,7 +88,7 @@ public class CredentialService {
             BigInteger pk = new BigInteger(bytes) ;
             Sign.SignatureData signatureData = signatureDataFromBytes(proof);
 
-            logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
+           // logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
             if(verifySignature(presentation.getCredentialSubject().toJson(),signatureData,pk)){
                 logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
                 return true;
@@ -102,7 +102,7 @@ public class CredentialService {
             ECP2 pk = ECP2.fromBytes(pkList);
             ECP signatureData = ECP.fromBytes(proof);
 
-            logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
+     //       logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
 
             if(verifyBLSSignature(pk,signatureData,presentation.toJson().getBytes()))
             {

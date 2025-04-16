@@ -32,6 +32,7 @@ public class Secp256k {
         return new ECKeyPair(privKey, pubKey);
     }
 
+
     // 压缩公钥
     public static String compressPubKey(BigInteger pubKey) {
         String pubKeyYPrefix = pubKey.testBit(0) ? "03" : "02";
@@ -48,6 +49,7 @@ public class Secp256k {
     // 验证签名
     public static boolean verifySignature(String msg, Sign.SignatureData signature, BigInteger pubKey) throws SignatureException {
         BigInteger pubKeyRecovered = Sign.signedMessageToKey(msg.getBytes(), signature);
+        System.out.println("msgHash    "+msg);
         return pubKey.equals(pubKeyRecovered);
     }
 
@@ -75,30 +77,7 @@ public class Secp256k {
     }
 
     // 主函数
-    public static void main(String[] args) throws Exception {
-        // 随机生成私钥
-        BigInteger privKey = new BigInteger("40779086466177057605767635656162985036307673144995806911493908486715184715114",10);
-        System.out.println("Generated private key: " + privKey);
 
-        // 生成密钥对
-        ECKeyPair keyPair = generateKeyPair(privKey);
-        System.out.println("Public key: " + keyPair.getPublicKey());
-
-        // 签名操作
-        String msg = "Message for signing";
-        byte[] msgHash = Hash.sha3(msg.getBytes());
-        Sign.SignatureData signature = signMessage(msgHash, keyPair);
-        System.out.println("Msg: " + msg);
-        System.out.println("Msg hash: " + Numeric.toHexString(msgHash));
-        System.out.printf("Signature: [v = %d, r = %s, s = %s]\n",
-                signature.getV() - 27,
-                Numeric.toHexString(signature.getR()),
-                Numeric.toHexString(signature.getS()));
-
-        // 验证签名
-        boolean validSig = verifySignature(msg, signature, keyPair.getPublicKey());
-        System.out.println("Signature valid? " + validSig);
-    }
 
     public static byte[] signatureDataToBytes(Sign.SignatureData signatureData) {
         // 验证r/s长度符合预期
@@ -133,11 +112,28 @@ public class Secp256k {
         return new Sign.SignatureData(v, r, s);
     }
 
-    // 新增辅助方法：获取标准化的v值（兼容EIP-155等）
-    public int getStandardV(Sign.SignatureData signatureData) {
-        // 将byte转为无符号int处理（避免负数问题）
-        return (signatureData.getV() & 0xFF);
+    public static void main(String[] args) throws Exception {
+        // 随机生成私钥
+        BigInteger privKey = new BigInteger("40779086466177057605767635656162985036307673144995806911493908486715184715114",10);
+        System.out.println("Generated private key: " + privKey);
+
+        // 生成密钥对
+        ECKeyPair keyPair = generateKeyPair(privKey);
+        System.out.println("Public key: " + keyPair.getPublicKey());
+
+        // 签名操作
+        String msg = "Message for signing";
+        byte[] msgHash = Hash.sha3(msg.getBytes());
+        Sign.SignatureData signature = signMessage(msgHash, keyPair);
+        System.out.println("Msg: " + msg);
+        System.out.println("Msg hash: " + Numeric.toHexString(msgHash));
+        System.out.printf("Signature: [v = %d, r = %s, s = %s]\n",
+                signature.getV() - 27,
+                Numeric.toHexString(signature.getR()),
+                Numeric.toHexString(signature.getS()));
+
+        // 验证签名
+        boolean validSig = verifySignature(msg, signature, keyPair.getPublicKey());
+        System.out.println("Signature valid? " + validSig);
     }
-
-
 }

@@ -46,6 +46,31 @@ public class Claim {
         return new ObjectMapper().readValue(json, Claim.class);
     }
 
+    public Claim(String serverAddress,String did,String role)
+    {
+        // 设置网络拓扑
+        SwarmTopology topology = new SwarmTopology();
+        topology.networkType = "Mesh";
+        topology.protocol = "OLSR";
+        topology.maxHop = 10;
+        this.swarmTopology = topology;
+
+        // 设置任务配置
+        MissionProfile mission = new MissionProfile();
+        mission.missionType = "Surveillance";
+        mission.priorityLevel = "High";
+        this.missionProfile = mission;
+
+        this.serverList.add(serverAddress);
+
+        // 填充无人机成员
+        UAVMember leader = new UAVMember();
+        leader.did = did;
+        leader.role = role;
+        this.members.add(leader);
+
+
+    }
     public Claim()
     {
         // 设置网络拓扑
@@ -63,39 +88,72 @@ public class Claim {
 
         // 添加服务器列表
 
-        this.serverList.add("10.0.0.6:10001");
-        this.serverList.add("10.0.0.7:10002");
-        this.serverList.add("10.0.0.8:10003");
-        this.serverList.add("10.0.0.9:10004");
-        this.serverList.add("10.0.0.10:10005");
+        this.serverList.add("10.0.0.1:6666");
+        this.serverList.add("10.0.0.2:7777");
+        this.serverList.add("10.0.0.3:8888");
+        this.serverList.add("10.0.0.4:9999");
+        this.serverList.add("10.0.0.5:10001");
+
+//        this.serverList.add("10.0.0.6:10001");
+//        this.serverList.add("10.0.0.7:10002");
+//        this.serverList.add("10.0.0.8:10003");
+//        this.serverList.add("10.0.0.9:10004");
+//        this.serverList.add("10.0.0.10:10005");
 
        // this.serverList.add("10.0.0.2:8080");
 
         // 填充无人机成员
         UAVMember leader = new UAVMember();
-        leader.did = "did:UAV:4299393459333579452";
+        leader.did = "did:UAV:2022388442233997107";
         leader.role = "Leader";
         this.members.add(leader);
 
         UAVMember follower = new UAVMember();
-        follower.did = "did:UAV:8647958377595746863";
+        follower.did = "did:UAV:5007456779067889161";
         follower.role = "Follower";
         this.members.add(follower);
 
         UAVMember follower2 = new UAVMember();
-        follower.did = "did:UAV:4866113057018606556";
+        follower.did = "did:UAV:1874660604459942339";
         follower.role = "Follower";
         this.members.add(follower2);
 
         UAVMember follower3 = new UAVMember();
-        follower.did = "did:UAV:4903767267843190058";
+        follower.did = "did:UAV:3313102635966818125";
         follower.role = "Follower";
-        this.members.add(follower);
+        this.members.add(follower3);
 
         UAVMember follower4 = new UAVMember();
-        follower.did = "did:UAV:6249724624898415776";
+        follower.did = "did:UAV:4203127509076539336";
         follower.role = "Follower";
-        this.members.add(follower);
+        this.members.add(follower4);
+
+
+//        // 填充无人机成员
+//        UAVMember leader = new UAVMember();
+//        leader.did = "did:UAV:4299393459333579452";
+//        leader.role = "Leader";
+//        this.members.add(leader);
+//
+//        UAVMember follower = new UAVMember();
+//        follower.did = "did:UAV:8647958377595746863";
+//        follower.role = "Follower";
+//        this.members.add(follower);
+//
+//        UAVMember follower2 = new UAVMember();
+//        follower.did = "did:UAV:4866113057018606556";
+//        follower.role = "Follower";
+//        this.members.add(follower2);
+//
+//        UAVMember follower3 = new UAVMember();
+//        follower.did = "did:UAV:4903767267843190058";
+//        follower.role = "Follower";
+//        this.members.add(follower);
+//
+//        UAVMember follower4 = new UAVMember();
+//        follower.did = "did:UAV:6249724624898415776";
+//        follower.role = "Follower";
+//        this.members.add(follower);
 
 
     }
