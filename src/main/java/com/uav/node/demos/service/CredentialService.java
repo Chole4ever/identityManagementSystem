@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SignatureException;
 
-import static com.uav.node.demos.crypto.BLSService.verifyBLSSignature;
 import static com.uav.node.demos.crypto.Secp256k.*;
 
 @Service

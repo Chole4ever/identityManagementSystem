@@ -134,6 +134,7 @@ public class GDIDService {
         pkshare.toBytes(value);
 
         Message message = new Message(config.getOwnerId(),"SEND_PUB_KEY_SHARED",value);
+        logger.info("SEND_PUB_KEY_SHARED:{}",pkshare);
         transportService.sendUDPMessage(message,config.getLeaderId());
     }
     public void sendSubSKShares() throws Exception {

@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.uav.node.demos.crypto.BLSService.verifyBLSSignature;
+
 @Service
 public class MessageService {
     @Qualifier("getConfig")
@@ -108,16 +110,14 @@ public class MessageService {
                     logger.info("partialSigs");
                     logger.info(String.valueOf(cryptoBean.getPartialSigs()));
                     logger.info("node {} generates agg sig {} ", config.getOwnerId(), agg);
-                    logger.info("node {} verify aggregated sig, result is {} ", config.getOwnerId(), "true");
-                    gdidService.sendRRToSc(agg);
-//                    if(verifySignature(cryptoBean.getGroupPubKey(),agg, cryptoBean.getMetadata()))
-//                    {
-//                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
-//                        gdidService.sendRRToSc(agg);
-//
-//                    }else{
-//                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"false");
-//                    }
+                    if(verifyBLSSignature(cryptoBean.getGroupPubKey(),agg, cryptoBean.getMetadata()))
+                    {
+                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
+                        gdidService.sendRRToSc(agg);
+
+                    }else{
+                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"false");
+                    }
                 }
 
                 break;
