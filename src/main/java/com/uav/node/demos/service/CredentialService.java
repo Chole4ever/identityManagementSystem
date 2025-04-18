@@ -46,7 +46,6 @@ public class CredentialService {
             Sign.SignatureData signatureData = signatureDataFromBytes(proof);
 
             String groupName = config.getGroupName()+"-";
-           // logger.info(groupName+"node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
 
             if(verifySignature(claim.toJson(),signatureData,pk)){
                 logger.info(groupName+"node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
@@ -84,16 +83,14 @@ public class CredentialService {
         {
             DDO ddo = smartContractService.findDID(did);
             String[] pkList = ddo.getPublicKeys();
-            byte[] bytes = pkList[0].getBytes();
-            BigInteger pk = new BigInteger(bytes) ;
+            String pkString = pkList[0];
+            BigInteger pk = new BigInteger(pkString) ;
             Sign.SignatureData signatureData = signatureDataFromBytes(proof);
-
-           // logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
             if(verifySignature(presentation.getCredentialSubject().toJson(),signatureData,pk)){
-                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
+                logger.info("node {} verifies presentation true, presentation {}",config.getOwnerId(),presentation.toJson());
                 return true;
             }else{
-                logger.info("node {} verifies credential false, credential {}",config.getOwnerId(),presentation.toJson());
+                logger.info("node {} verifies presentation false, presentation {}",config.getOwnerId(),presentation.toJson());
             }
         }else{
 
@@ -101,8 +98,6 @@ public class CredentialService {
             byte[] pkList = gddo.getPublicKeys();
             ECP2 pk = ECP2.fromBytes(pkList);
             ECP signatureData = ECP.fromBytes(proof);
-
-     //       logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
 
             if(verifyBLSSignature(pk,signatureData,presentation.toJson().getBytes()))
             {
