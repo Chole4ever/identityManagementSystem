@@ -1,6 +1,7 @@
 package com.uav.node.demos.service;
 
 import com.uav.node.demos.config.AuthSession;
+import com.uav.node.demos.config.CredentialConfig;
 import com.uav.node.demos.config.CryptoBean;
 import com.uav.node.demos.config.GlobalConfig;
 import com.uav.node.demos.crypto.BLSService;
@@ -44,6 +45,8 @@ public class MessageService {
     BLSService blsService;
     @Autowired
     AuthService authService;
+    @Autowired
+    CredentialConfig credentialConfig;
     Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     public void processMessage(MessageDTO messageDTO) throws Exception {
@@ -156,11 +159,10 @@ public class MessageService {
                 authService.sendPrepareGroupVP();
                 break;
             case "PrepareGroupVP":
-                 byte[] messageValue = message.getValue();
-                ECP signSig = dkgService.signSig(messageValue);
-             //   logger.info(groupName+"node {} generates sub-sig {} ", config.getOwnerId(), signSig);
-                byte[] signSigBytes = new byte[97];
+                byte[] gvcBytes = credentialConfig.getGroupCredentials().get(0).toJson().getBytes();
 
+                ECP signSig = dkgService.signSig(gvcBytes);
+                byte[] signSigBytes = new byte[97];
                 signSig.toBytes(signSigBytes, false);
                 Message m_ = new Message(config.getOwnerId(), "ConfirmPreparation", signSigBytes);
                 transportService.sendUDPMessage(m_, config.getLeaderId());

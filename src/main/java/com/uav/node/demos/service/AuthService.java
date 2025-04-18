@@ -114,6 +114,7 @@ public class AuthService {
 
     public Presentation sendGVP(ECP agg,MessageDTO messageDTO) throws Exception {
         Credential credential = credentialConfig.getGroupCredentials().get(0);
+
         Presentation presentation = new Presentation();
         byte[] aggBytes = new byte[97];
         agg.toBytes(aggBytes,false);
