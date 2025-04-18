@@ -38,5 +38,4 @@ public class CredentialConfig {
         this.groupCredentials.add(credential2);
 
     }
-=
 }

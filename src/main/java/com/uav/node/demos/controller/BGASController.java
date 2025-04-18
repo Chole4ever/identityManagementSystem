@@ -4,7 +4,9 @@ import com.uav.node.demos.config.GlobalConfig;
 import com.uav.node.demos.crypto.Secp256k;
 import com.uav.node.demos.model.Claim;
 import com.uav.node.demos.model.Credential;
+import com.uav.node.demos.model.Message;
 import com.uav.node.demos.service.AuthService;
+import com.uav.node.demos.service.TransportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,9 @@ public class BGASController {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    TransportService transportService;
 
     @Qualifier("getConfig")
     @Autowired
@@ -47,6 +52,15 @@ public class BGASController {
         return "hello";
     }
 
+    @GetMapping("/test")
+    public String test() throws Exception {
+
+
+        Message message = new Message(config.getOwnerId(),"PrepareGroupVP");
+        transportService.sendBroadcastMessage(message);
+
+        return "hello";
+    }
 
 
 }

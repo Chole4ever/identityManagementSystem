@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -161,6 +162,8 @@ public class MessageService {
             case "PrepareGroupVP":
                 byte[] gvcBytes = credentialConfig.getGroupCredentials().get(0).toJson().getBytes();
 
+                System.out.println("gvcBytes "+ Arrays.toString(gvcBytes));
+
                 ECP signSig = dkgService.signSig(gvcBytes);
                 byte[] signSigBytes = new byte[97];
                 signSig.toBytes(signSigBytes, false);
@@ -171,20 +174,29 @@ public class MessageService {
                 byte[] subSignSig = message.getValue();
                 ECP subsig_ = ECP.fromBytes(subSignSig);
                 int from_ = message.getFromId() + 1;
+
                 HashMap<Integer, ECP> partialSigs_ = cryptoBean.getPartialSigsForGVP();
                 partialSigs_.put(from_, subsig_);
                 cryptoBean.setPartialSigsForGVP(partialSigs_);
                 if (partialSigs_.size() == config.getThreshold() + 1) {
 
+                    byte[] gvcBytes_ = credentialConfig.getGroupCredentials().get(0).toJson().getBytes();
                     ECP agg = blsService.aggregatedSignatures(partialSigs_);
                     logger.info(groupName+"node {} calculate agg sig...", config.getOwnerId());
                     logger.info("收集的子签名");
                     logger.info(String.valueOf(cryptoBean.getPartialSigsForGVP()));
                     logger.info(groupName+"node {} generates agg sig {} ", config.getOwnerId(), agg);
-                    logger.info(groupName+"node {} verify aggregated sig, result is {} ", config.getOwnerId(), "true");
-                    Presentation presentation = authService.sendGVP(agg,messageDTO);
-                    logger.info("-----------------GVP生成成功，发送给对方领导节点-----------------------------------");
-                    logger.info(groupName+"node {} sends Group Verifiable Presentation {}", config.getOwnerId(), presentation.toJson());
+
+                    if(verifyBLSSignature(cryptoBean.getGroupPubKey(),agg,gvcBytes_))
+                    {
+                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
+                        Presentation presentation = authService.sendGVP(agg,messageDTO);
+                        logger.info("-----------------GVP生成成功，发送给对方领导节点-----------------------------------");
+                        logger.info(groupName+"node {} sends Group Verifiable Presentation {}", config.getOwnerId(), presentation.toJson());
+
+                    }else{
+                        logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"false");
+                    }
                 }
                 break;
             case "FinalizeGroupVP":
