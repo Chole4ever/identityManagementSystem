@@ -29,7 +29,7 @@ public class MessageCallbackImpl implements MessageCallback {
            messageService.processMessage(messageDTO);
        }catch (Exception e)
        {
-           logger.info("onMessageReceived: {}",e.getMessage());
+           logger.info("onMessageReceived: {}",e.getCause().getMessage());
        }
 
     }

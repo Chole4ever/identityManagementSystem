@@ -64,7 +64,7 @@ public class UDPServer {
                     }
                     callback.onMessageReceived(bytes, packet.getAddress(),packet.getPort());
                 } catch (IOException e) {
-                    logger.info(e.getMessage());
+                    logger.info(e.getCause().getMessage());
                     break;
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -72,7 +72,7 @@ public class UDPServer {
             }
         });
         executorService.submit(() -> {
-            byte[] buffer = new byte[100000000];
+            byte[] buffer = new byte[32768];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             while (true) {
