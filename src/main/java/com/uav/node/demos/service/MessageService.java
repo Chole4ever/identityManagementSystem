@@ -256,6 +256,10 @@ public class MessageService {
                     logger.info(credential.toJson());
                     if(credentialService.verifyCredential(credential)){
                         logger.info("Group authentication finishes ");
+                        PersistStore ps = new PersistStore();
+                        String path = "\"gvc\"+authSession.getCounterpartyGroupGdid()+System.currentTimeMillis()";
+                        ps.wirteToFile(path,"gvc",credential.toJson().getBytes());
+                        logger.info("Store GVC locally as /keystore/{}.json",path);
                     }else{
                         logger.info("Group authentication fails, received GVC is illegal. ");
                     }
