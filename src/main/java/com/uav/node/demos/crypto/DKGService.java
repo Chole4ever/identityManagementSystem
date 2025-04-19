@@ -113,6 +113,15 @@ public class DKGService {
         return sig_i;
 
     }
+    public ECP signSig(byte[] metadata,BIG sk) {
+        ECP H_m = hashToG1(metadata);
+        H_m.affine();
+        ECP sig_i = new ECP(H_m);
+        sig_i = sig_i.mul(sk);
+        sig_i.affine();
+        return sig_i;
+
+    }
     public static ECP hashToG1(byte[] message) {
         byte[] hash;
         try {

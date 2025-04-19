@@ -257,6 +257,8 @@ public class MessageService {
                 {
                     logger.info("IssueGroupCredential {}",e.getMessage());
                 }
+            case "test":
+
 
             default:
                 logger.info("Unknown message type: " + message.getCommand());

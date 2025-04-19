@@ -1,15 +1,23 @@
 package com.uav.node;
 
 
+import com.uav.node.demos.config.CredentialConfig;
 import com.uav.node.demos.config.CryptoBean;
 import com.uav.node.demos.config.GlobalConfig;
+import com.uav.node.demos.crypto.BLSService;
+import com.uav.node.demos.crypto.DKGService;
 import com.uav.node.demos.crypto.Secp256k;
 import com.uav.node.demos.model.Claim;
 import com.uav.node.demos.model.Credential;
+import com.uav.node.demos.model.GDDO;
 import com.uav.node.demos.model.Presentation;
 import com.uav.node.demos.service.CredentialService;
+import com.uav.node.demos.service.SmartContractService;
 import com.uav.node.demos.util.JsonBytesConverter;
 import com.uav.node.demos.util.PersistStore;
+import org.apache.milagro.amcl.BLS381.BIG;
+import org.apache.milagro.amcl.BLS381.ECP;
+import org.apache.milagro.amcl.BLS381.ECP2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +29,9 @@ import org.web3j.crypto.Sign;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.HashMap;
 
+import static com.uav.node.demos.crypto.BLSService.verifyBLSSignature;
 import static com.uav.node.demos.crypto.Secp256k.generateKeyPair;
 import static com.uav.node.demos.crypto.Secp256k.signatureDataToBytes;
 
@@ -31,12 +41,24 @@ public class testVp {
     @Autowired
     CredentialService credentialService;
 
+    @Autowired
+    DKGService dkgService;
+
     @Qualifier("getConfig")
     @Autowired
     GlobalConfig config;
 
     @Autowired
     CryptoBean cryptoBean;
+
+    @Autowired
+    BLSService blsService;
+
+    @Autowired
+    SmartContractService smartContractService;
+    @Autowired
+    CredentialConfig credentialConfig;
+
 
     @Test
     public void test() throws Exception {
@@ -72,7 +94,40 @@ public class testVp {
         leaderVP.create(credential2,ecKeyPair,did);
 
         credentialService.verifyPresentation(leaderVP);
-
-
     }
+
+    @Test
+    public void test2() throws Exception{
+        BIG[] sks = new BIG[5];
+        PersistStore ps = new PersistStore();
+
+        for(int i=1;i<=5;i++)
+        {
+            byte[] temp =  ps.loadFromFile("./keystore/skCollection.json","sk"+i);
+            sks[i-1] = BIG.fromBytes(temp);
+            System.out.println("sk"+i+" "+sks[i-1] );
+        }
+
+        byte[] bytes = credentialConfig.getGroupCredentials().get(0).toJson().getBytes();
+
+        HashMap<Integer, ECP> partialSigs = new HashMap<>();
+        for(int i=1;i<=5;i++)
+        {
+            partialSigs.put(i,dkgService.signSig(bytes,sks[i-1]));
+        }
+
+        ECP agg = blsService.aggregatedSignatures(partialSigs);
+
+        GDDO gddo = smartContractService.findGDID(config.getGdid());
+        byte[] pkList = gddo.getPublicKeys();
+        ECP2 pk = ECP2.fromBytes(pkList);
+
+        if(verifyBLSSignature(pk,agg,bytes))
+        {
+            System.out.println("true");
+        }else{
+            System.out.println("false");
+        }
+    }
+
 }

@@ -1,10 +1,14 @@
 package com.uav.node.demos.config;
 
+import com.uav.node.demos.model.GDDO;
+import com.uav.node.demos.service.SmartContractService;
 import com.uav.node.demos.util.PersistStore;
 import lombok.Data;
 import org.apache.milagro.amcl.BLS381.BIG;
 import org.apache.milagro.amcl.BLS381.ECP;
 import org.apache.milagro.amcl.BLS381.ECP2;
+import org.fisco.bcos.sdk.v3.codec.ContractCodecException;
+import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionBaseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
@@ -27,6 +31,8 @@ public class CryptoBean {
     @Qualifier("getConfig")
     @Autowired
     GlobalConfig config;
+    @Autowired
+    SmartContractService smartContractService;
 
     private int threshold;
     private int n;
@@ -47,7 +53,7 @@ public class CryptoBean {
     private ECKeyPair ecKeyPair;
 
     @PostConstruct
-    public void init() throws IOException {
+    public void init() throws IOException, TransactionBaseException, ContractCodecException {
         threshold = config.getThreshold();
         n = config.count;
         skshares = new ArrayList<>();
@@ -55,6 +61,10 @@ public class CryptoBean {
         partialSigs = new HashMap<>();
         partialSigsForGVP = new HashMap<>();
         partialSigsForGVC = new HashMap<>();
+
+        GDDO gddo = smartContractService.findGDID(config.getGdid());
+        byte[] pkList = gddo.getPublicKeys();
+        groupPubKey = ECP2.fromBytes(pkList);
 
 
         PersistStore persistStore = new PersistStore();
