@@ -48,6 +48,8 @@ public class MessageService {
     AuthService authService;
     @Autowired
     CredentialConfig credentialConfig;
+    @Autowired
+    CredentialService credentialService;
     Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     public void processMessage(MessageDTO messageDTO) throws Exception {
@@ -208,7 +210,7 @@ public class MessageService {
                 if (isValid_) {
                     logger.info(groupName+"node {} requests to authenticator committee for Group verifiable Credential Generation...", config.getOwnerId());
                     logger.info("----------------GVP验证成功，进行GVC颁发-----------------------------------");
-                    authService.requestAggregateSignatures(messageDTO);
+                    authService.requestAggregateSignatures();
                 }
                 break;
             case "AggregateSignatures":
@@ -216,6 +218,7 @@ public class MessageService {
 
                 byte[] messageValue1 = message.getValue();
                 ECP signSig1 = dkgService.signSig(messageValue1);
+
                 logger.info(groupName+"node {} generates sub-sig {} ", config.getOwnerId(), signSig1);
                 byte[] signSigBytes1 = new byte[97];
 
@@ -251,7 +254,12 @@ public class MessageService {
                     logger.info(groupName+"node {} receives Group Verifiable Credential", config.getOwnerId());
                     logger.info("----------------GVC信息-----------------------------------");
                     logger.info(credential.toJson());
-                    logger.info("Group authentication finishes ");
+                    if(credentialService.verifyCredential(credential)){
+                        logger.info("Group authentication finishes ");
+                    }else{
+                        logger.info("Group authentication fails, received GVC is illegal. ");
+                    }
+
                     logger.info("----------------群组认证结束-----------------------------------");
                 }catch (Exception e)
                 {

@@ -133,7 +133,7 @@ public class AuthService {
 
     }
 
-    public void requestAggregateSignatures(MessageDTO messageDTO) throws Exception {
+    public void requestAggregateSignatures() throws Exception {
         String holderId = authSession.getCounterpartyGroupGdid();
         String issuerId = config.getGdid();
         int type = 1;
@@ -144,7 +144,7 @@ public class AuthService {
         Credential credential = Credential.wrapCredential(claim,type,30,
                 issuerId,holderId,proof);
         authSession.setGvc(credential);
-        Message message = new Message(config.getOwnerId(),"AggregateSignatures",credential.toJson().getBytes());
+        Message message = new Message(config.getOwnerId(),"AggregateSignatures",claim.toJson().getBytes());
         transportService.sendBroadcastMessage(message);
     }
 
@@ -166,7 +166,6 @@ public class AuthService {
         leader.setDid(authSession.getCounterpartyLeaderDid());
         leader.setRole("Leader");
         claim.getMembers().add(leader);
-
     }
 
     public Credential sendGVC(ECP agg, MessageDTO messageDTO) throws Exception {

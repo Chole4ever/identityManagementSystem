@@ -65,7 +65,7 @@ public class CredentialService {
                 logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
                 return true;
             }else{
-                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
+                logger.info("node {} verifies credential false, credential {}",config.getOwnerId(),credential.toJson());
             }
         }
 
@@ -103,7 +103,7 @@ public class CredentialService {
                 logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
                 return true;
             }else{
-                logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
+                logger.info("node {} verifies credential false, credential {}",config.getOwnerId(),presentation.toJson());
             }
         }
        return false;
