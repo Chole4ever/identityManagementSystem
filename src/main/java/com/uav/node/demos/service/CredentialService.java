@@ -60,8 +60,6 @@ public class CredentialService {
             ECP2 pk = ECP2.fromBytes(pkList);
             ECP signatureData = ECP.fromBytes(proof);
 
-            // logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
-
             if(verifyBLSSignature(pk,signatureData,claim.toJson().getBytes()))
             {
                 logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),credential.toJson());
@@ -98,8 +96,9 @@ public class CredentialService {
             byte[] pkList = gddo.getPublicKeys();
             ECP2 pk = ECP2.fromBytes(pkList);
             ECP signatureData = ECP.fromBytes(proof);
+            Credential credential = presentation.getCredentialSubject();
 
-            if(verifyBLSSignature(pk,signatureData,presentation.toJson().getBytes()))
+            if(verifyBLSSignature(pk,signatureData,credential.toJson().getBytes()))
             {
                 logger.info("node {} verifies credential true, credential {}",config.getOwnerId(),presentation.toJson());
                 return true;
