@@ -2,6 +2,8 @@ package com.uav.node.demos.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.uav.node.demos.model.Credential;
+import com.uav.node.demos.service.CredentialService;
 import com.uav.node.demos.service.TransportService;
 import org.apache.milagro.amcl.BLS381.BIG;
 import org.slf4j.Logger;
@@ -51,13 +53,11 @@ public class PersistStore {
     }
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         PersistStore persistStore = new PersistStore();
-        byte[] ans = persistStore.loadFromFile("./keystore/sk.json","sk");
-        BIG bb = BIG.fromBytes(ans);
-        System.out.println(bb);
-        //0000000000000000000000000000000045e88a2828bc217dcbf8f7e4b5fa871b3d80e184cdf40ba4571883d6717630bf
-        //0000000000000000000000000000000045e88a2828bc217dcbf8f7e4b5fa871b3d80e184cdf40ba4571883d6717630bf
+        byte[] ans = persistStore.loadFromFile("./keystore/GroupCredential.json","GroupCredential");
+        Credential credential = JsonBytesConverter.fromBytes(ans,Credential.class);
+        System.out.println(credential);
 
 
     }

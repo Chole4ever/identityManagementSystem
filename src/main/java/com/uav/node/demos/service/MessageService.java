@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.uav.node.demos.crypto.BLSService.verifyBLSSignature;
 
@@ -86,7 +87,8 @@ public class MessageService {
                     logger.info("node {} calculate PK key...", config.getOwnerId());
                     logger.info("Pk shares: {}", cryptoBean.getPkshares().toString());
                     logger.info("Group PK key: {}", gpk.toString());
-                   // gdidService.launchGdidRR();
+                    TimeUnit.SECONDS.sleep(1);
+                     gdidService.launchGdidRR();
                 }
                 break;
             case "BROADG_DID_GENERATION_REQUEST":

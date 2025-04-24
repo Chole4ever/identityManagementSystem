@@ -41,10 +41,6 @@ public class Claim {
     public String toJson() throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(this);
     }
-    // 反序列化
-    public Claim fromJson(String json) throws JsonProcessingException {
-        return new ObjectMapper().readValue(json, Claim.class);
-    }
 
     public Claim(String serverAddress,String did,String role)
     {
@@ -88,11 +84,11 @@ public class Claim {
 
         // 添加服务器列表
 
-        this.serverList.add("10.0.0.1:6666");
-        this.serverList.add("10.0.0.2:7777");
-        this.serverList.add("10.0.0.3:8888");
-        this.serverList.add("10.0.0.4:9999");
-        this.serverList.add("10.0.0.5:10001");
+        this.serverList.add("10.29.158.143:6666");
+        this.serverList.add("10.129.4.89:7777");
+//        this.serverList.add("10.0.0.3:8888");
+//        this.serverList.add("10.0.0.4:9999");
+//        this.serverList.add("10.0.0.5:10001");
 
 //        this.serverList.add("10.0.0.6:10001");
 //        this.serverList.add("10.0.0.7:10002");
@@ -113,20 +109,20 @@ public class Claim {
         follower.role = "Follower";
         this.members.add(follower);
 
-        UAVMember follower2 = new UAVMember();
-        follower.did = "did:UAV:1874660604459942339";
-        follower.role = "Follower";
-        this.members.add(follower2);
-
-        UAVMember follower3 = new UAVMember();
-        follower.did = "did:UAV:3313102635966818125";
-        follower.role = "Follower";
-        this.members.add(follower3);
-
-        UAVMember follower4 = new UAVMember();
-        follower.did = "did:UAV:4203127509076539336";
-        follower.role = "Follower";
-        this.members.add(follower4);
+//        UAVMember follower2 = new UAVMember();
+//        follower.did = "did:UAV:1874660604459942339";
+//        follower.role = "Follower";
+//        this.members.add(follower2);
+//
+//        UAVMember follower3 = new UAVMember();
+//        follower.did = "did:UAV:3313102635966818125";
+//        follower.role = "Follower";
+//        this.members.add(follower3);
+//
+//        UAVMember follower4 = new UAVMember();
+//        follower.did = "did:UAV:4203127509076539336";
+//        follower.role = "Follower";
+//        this.members.add(follower4);
 
 
 //        // 填充无人机成员
