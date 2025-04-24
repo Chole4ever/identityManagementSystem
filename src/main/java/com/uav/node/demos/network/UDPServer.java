@@ -48,7 +48,7 @@ public class UDPServer {
         DatagramSocket finalSocket2 = p2pSocket;
 
         executorService.submit(() -> {
-            byte[] buffer = new byte[32768];
+            byte[] buffer = new byte[1000000];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             while (true) {
@@ -64,7 +64,7 @@ public class UDPServer {
                     }
                     callback.onMessageReceived(bytes, packet.getAddress(),packet.getPort());
                 } catch (IOException e) {
-                    logger.info(e.getCause().getMessage());
+                    logger.info("startServer :"+e.getCause().getMessage());
                     break;
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -72,7 +72,7 @@ public class UDPServer {
             }
         });
         executorService.submit(() -> {
-            byte[] buffer = new byte[32768];
+            byte[] buffer = new byte[1000000];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             while (true) {
@@ -88,7 +88,7 @@ public class UDPServer {
                     }
                     callback.onMessageReceived(bytes, packet.getAddress(),packet.getPort());
                 } catch (IOException e) {
-                    logger.info(String.valueOf(e.getCause()));
+                    logger.info("startServer :"+String.valueOf(e.getCause()));
                     break;
                 } catch (Exception e) {
                     logger.info(String.valueOf(e.getCause()));

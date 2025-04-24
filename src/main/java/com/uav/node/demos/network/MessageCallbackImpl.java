@@ -24,6 +24,7 @@ public class MessageCallbackImpl implements MessageCallback {
 
        try {
            Message message =  Message.fromByteArray(m);
+           assert message != null;
            logger.info("node "+config.getOwnerId()+" received"+message.toGood());
            MessageDTO messageDTO = new MessageDTO(message,address,port);
            messageService.processMessage(messageDTO);

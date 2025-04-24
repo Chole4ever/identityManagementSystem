@@ -86,7 +86,7 @@ public class MessageService {
                     logger.info("node {} calculate PK key...", config.getOwnerId());
                     logger.info("Pk shares: {}", cryptoBean.getPkshares().toString());
                     logger.info("Group PK key: {}", gpk.toString());
-                    gdidService.launchGdidRR();
+                   // gdidService.launchGdidRR();
                 }
                 break;
             case "BROADG_DID_GENERATION_REQUEST":

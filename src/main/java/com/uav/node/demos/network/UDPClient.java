@@ -21,28 +21,33 @@ public class UDPClient {
 
     Logger logger = LoggerFactory.getLogger(UDPClient.class);
     public void Broadcast(Message message) throws Exception {
-        DatagramSocket socket = new DatagramSocket();
-        socket.setBroadcast(true);
-        InetAddress address = InetAddress.getByName("255.255.255.255");
-        byte[] data = message.toByteArray();
 
-        DatagramPacket packet1 = new DatagramPacket(
-                data, data.length, address, 44444);
-        DatagramPacket packet2 = new DatagramPacket(
-                data, data.length, address, 44445);
-        DatagramPacket packet3 = new DatagramPacket(
-                data, data.length, address, 44446);
-        DatagramPacket packet4 = new DatagramPacket(
-                data, data.length, address, 44447);
-        DatagramPacket packet5 = new DatagramPacket(
-                data, data.length, address, 44448);
-        socket.send(packet1);
-        socket.send(packet2);
-        socket.send(packet3);
-        socket.send(packet4);
-        socket.send(packet5);
-
-        socket.close();
+        for(int i=0;i<config.getCount();i++)
+        {
+            send(message,i);
+        }
+//        DatagramSocket socket = new DatagramSocket();
+//        socket.setBroadcast(true);
+//        InetAddress address = InetAddress.getByName("255.255.255.255");
+//        byte[] data = message.toByteArray();
+//
+//        DatagramPacket packet1 = new DatagramPacket(
+//                data, data.length, address, 44444);
+//        DatagramPacket packet2 = new DatagramPacket(
+//                data, data.length, address, 44445);
+//        DatagramPacket packet3 = new DatagramPacket(
+//                data, data.length, address, 44446);
+//        DatagramPacket packet4 = new DatagramPacket(
+//                data, data.length, address, 44447);
+//        DatagramPacket packet5 = new DatagramPacket(
+//                data, data.length, address, 44448);
+//        socket.send(packet1);
+//        socket.send(packet2);
+//        socket.send(packet3);
+//        socket.send(packet4);
+//        socket.send(packet5);
+//
+//        socket.close();
     }
 
     public void send(Message message, int toId) throws IOException {
@@ -58,7 +63,7 @@ public class UDPClient {
         byte[] data = message.toByteArray();
         DatagramPacket packet = new DatagramPacket(
                 data, data.length, address, config.getPeerudpPorts().get(toId));
-
+        logger.info(" send to host:{} ,port {},message:{} ",host,port,message.toGood());
         socket.send(packet);
         socket.close();
     }

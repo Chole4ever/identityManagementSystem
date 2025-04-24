@@ -72,8 +72,8 @@ public class CryptoBean {
         ecKeyPair= new ECKeyPair(pri,pub);
 
         //sk_i
-        byte[] bytes3 = persistStore.loadFromFile("keystore/sk.json","sk");
-        sk_i = BIG.fromBytes(bytes3);
+//        byte[] bytes3 = persistStore.loadFromFile("keystore/sk.json","sk");
+//        sk_i = BIG.fromBytes(bytes3);
 
 
 
