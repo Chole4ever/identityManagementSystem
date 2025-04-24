@@ -6,10 +6,7 @@ import com.uav.node.demos.config.CryptoBean;
 import com.uav.node.demos.config.GlobalConfig;
 import com.uav.node.demos.crypto.BLSService;
 import com.uav.node.demos.crypto.DKGService;
-import com.uav.node.demos.model.Credential;
-import com.uav.node.demos.model.Message;
-import com.uav.node.demos.model.MessageDTO;
-import com.uav.node.demos.model.Presentation;
+import com.uav.node.demos.model.*;
 import com.uav.node.demos.util.JsonBytesConverter;
 import com.uav.node.demos.util.PersistStore;
 import org.apache.milagro.amcl.BLS381.*;
@@ -50,6 +47,8 @@ public class MessageService {
     CredentialConfig credentialConfig;
     @Autowired
     CredentialService credentialService;
+    @Autowired
+    SmartContractService smartContractService;
     Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     public void processMessage(MessageDTO messageDTO) throws Exception {
@@ -116,6 +115,11 @@ public class MessageService {
                     logger.info("partialSigs");
                     logger.info(String.valueOf(cryptoBean.getPartialSigs()));
                     logger.info("node {} generates agg sig {} ", config.getOwnerId(), agg);
+                    if(cryptoBean.getGroupPubKey()==null){
+                        GDDO gddo = smartContractService.findGDID(config.getGdid());
+                        byte[] pkList = gddo.getPublicKeys();
+                        cryptoBean.setGroupPubKey(ECP2.fromBytes(pkList));
+                    }
                     if(verifyBLSSignature(cryptoBean.getGroupPubKey(),agg, cryptoBean.getMetadata()))
                     {
                         logger.info("node {} verify aggregated sig, result is {} ",config.getOwnerId(),"true");
@@ -188,6 +192,12 @@ public class MessageService {
                     logger.info("收集的子签名");
                     logger.info(String.valueOf(cryptoBean.getPartialSigsForGVP()));
                     logger.info(groupName+"node {} generates agg sig {} ", config.getOwnerId(), agg);
+
+                    if(cryptoBean.getGroupPubKey()==null){
+                        GDDO gddo = smartContractService.findGDID(config.getGdid());
+                        byte[] pkList = gddo.getPublicKeys();
+                        cryptoBean.setGroupPubKey(ECP2.fromBytes(pkList));
+                    }
 
                     if(verifyBLSSignature(cryptoBean.getGroupPubKey(),agg,gvcBytes_))
                     {

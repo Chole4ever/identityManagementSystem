@@ -62,11 +62,6 @@ public class CryptoBean {
         partialSigsForGVP = new HashMap<>();
         partialSigsForGVC = new HashMap<>();
 
-        GDDO gddo = smartContractService.findGDID(config.getGdid());
-        byte[] pkList = gddo.getPublicKeys();
-        groupPubKey = ECP2.fromBytes(pkList);
-
-
         PersistStore persistStore = new PersistStore();
 
         byte[] bytes = persistStore.loadFromFile("keystore/ecKeyPair.json","pri");

@@ -24,13 +24,7 @@
 
     </repositories>
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/net.consensys.cava/cava-eth -->
-        <!-- https://mvnrepository.com/artifact/net.consensys.cava/cava-concurrent -->
-        <dependency>
-            <groupId>net.consensys.cava</groupId>
-            <artifactId>cava</artifactId>
-            <version>0.5.0</version>
-        </dependency>
+
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -119,13 +113,13 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.uav.node.NodeApplication</mainClass>
-                    <skip>true</skip>
                 </configuration>
                 <executions>
                     <execution>
@@ -136,7 +130,19 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
+        <resources>
+            <!--设置自己目录下的配置文件-->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
+
     </build>
 
 </project>
