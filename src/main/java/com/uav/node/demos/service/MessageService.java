@@ -280,9 +280,7 @@ public class MessageService {
                 }
                 break;
             case "storeGVC":
-
                 PersistStore ps = new PersistStore();
-
                 String time = String.valueOf(System.currentTimeMillis());
                 String path = "gvc"+authSession.getCounterpartyGroupGdid()+time;
                 ps.wirteToFile(path,"gvc",message.getValue());
