@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "uav")
+@PropertySource(value = "classpath:application.properties", ignoreResourceNotFound = true, encoding = "UTF-8")
 public class GlobalConfig {
     int ownerId;
     int leaderId;

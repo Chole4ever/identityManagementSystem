@@ -25,6 +25,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
+import java.util.UUID;
 
 @Service
 public class GDIDService {
@@ -49,7 +50,8 @@ public class GDIDService {
     }
     public void launchGdidRR() throws Exception {
         logger.info("node "+config.getOwnerId()+" launches GDID doc registered...");
-        String gdid = generateDID("group-A-0424-4");
+        UUID uuid = UUID.randomUUID();
+        String gdid = generateDID("group-A-0424-4"+uuid);
         config.setGdid(gdid);
 
         List<String> didLists = config.getDidLists();

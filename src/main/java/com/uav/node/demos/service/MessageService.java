@@ -170,7 +170,6 @@ public class MessageService {
             case "PrepareGroupVP":
                 byte[] gvcBytes = credentialConfig.getGroupCredentials().get(0).toJson().getBytes();
 
-                System.out.println("gvcBytes "+ Arrays.toString(gvcBytes));
 
                 ECP signSig = dkgService.signSig(gvcBytes);
                 byte[] signSigBytes = new byte[97];
@@ -268,11 +267,8 @@ public class MessageService {
                     logger.info(credential.toJson());
                     if(credentialService.verifyCredential(credential)){
                         logger.info("Group authentication finishes ");
-                        PersistStore ps = new PersistStore();
-                        String time = String.valueOf(System.currentTimeMillis());
-                        String path = "gvc"+authSession.getCounterpartyGroupGdid()+time;
-                        ps.wirteToFile(path,"gvc",credential.toJson().getBytes());
-                        logger.info("Store GVC locally as /keystore/{}.json",path);
+                        authService.sendGVCToStore(credential.toJson().getBytes());
+
                     }else{
                         logger.info("Group authentication fails, received GVC is illegal. ");
                     }
@@ -282,11 +278,17 @@ public class MessageService {
                 {
                     logger.info("IssueGroupCredential {}",e.getMessage());
                 }
-            case "test":
+                break;
+            case "storeGVC":
 
+                PersistStore ps = new PersistStore();
 
+                String time = String.valueOf(System.currentTimeMillis());
+                String path = "gvc"+authSession.getCounterpartyGroupGdid()+time;
+                ps.wirteToFile(path,"gvc",message.getValue());
+                logger.info("Store GVC locally as /keystore/{}.json",path);
+                break;
             default:
-                logger.info("Unknown message type: " + message.getCommand());
                 break;
         }
 

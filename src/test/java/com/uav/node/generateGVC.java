@@ -35,7 +35,7 @@ public class generateGVC {
         ECKeyPair ecKeyPair = generateKeyPair(pri);
         Credential gvc = new Credential();
         gvc.setIssuer("did:GCS:2586753285709987093");
-        gvc.setHolder("did:group:5543662756399088765");
+        gvc.setHolder("did:group:8328676511197709052");
         Claim claim = new Claim();
 
         byte[] msgHash = Hash.sha3(claim.toJson().getBytes());
@@ -49,6 +49,7 @@ public class generateGVC {
             System.out.println("success");
             PersistStore ps = new PersistStore();
             ps.wirteToFile("GroupCredential","GroupCredential",gvc.toJson().getBytes());
+            System.out.println(gvc);
 
         }
     }

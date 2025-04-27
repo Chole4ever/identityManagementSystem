@@ -123,7 +123,7 @@ public class AuthService {
         presentation.setType(1);
         presentation.setCredentialSubject(credential);
 
-        String ip  = messageDTO.getInetAddress().getHostAddress();
+        String ip  = config.getAuthIp();
         int port = messageDTO.getPort();
 
         Message message = new Message(config.getOwnerId(),"FinalizeGroupVP",presentation.toJson().getBytes());
@@ -174,7 +174,7 @@ public class AuthService {
         agg.toBytes(aggbytes,false);
         gvc.setProof(aggbytes);
 
-        String ip  = messageDTO.getInetAddress().getHostAddress();
+        String ip  = config.getAuthIp();
         int port = messageDTO.getPort();
 
         Message message = new Message(config.getOwnerId(),"IssueGroupCredential",gvc.toJson().getBytes());
@@ -183,4 +183,10 @@ public class AuthService {
 
         return gvc;
     }
+
+    public void sendGVCToStore(byte[] gvcBytes) throws Exception {
+        Message message = new Message(config.getOwnerId(),"storeGVC",gvcBytes);
+        transportService.sendBroadcastMessage(message);
+    }
+
 }
