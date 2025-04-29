@@ -3,7 +3,9 @@ package com.uav.node;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.uav.node.demos.model.Claim;
 import com.uav.node.demos.model.Credential;
+import com.uav.node.demos.model.Message;
 import com.uav.node.demos.service.CredentialService;
+import com.uav.node.demos.service.TransportService;
 import com.uav.node.demos.util.PersistStore;
 import org.fisco.bcos.sdk.v3.codec.ContractCodecException;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionBaseException;
@@ -25,9 +27,11 @@ public class generateGVC {
 
     @Autowired
     CredentialService credentialService;
+    @Autowired
+    TransportService transportService;
 
     @Test
-    public void generateGVCMethod() throws IOException, TransactionBaseException, ContractCodecException, SignatureException {
+    public void generateGVCMethod() throws Exception {
         //gcs
         String priS = "40779086466177057605767635656162985036307673144995806911493908486715184715114";
         BigInteger pri = new BigInteger(priS);
@@ -35,7 +39,7 @@ public class generateGVC {
         ECKeyPair ecKeyPair = generateKeyPair(pri);
         Credential gvc = new Credential();
         gvc.setIssuer("did:GCS:2586753285709987093");
-        gvc.setHolder("did:group:8328676511197709052");
+        gvc.setHolder("did:group:5096603906684931226");
         Claim claim = new Claim();
 
         byte[] msgHash = Hash.sha3(claim.toJson().getBytes());
@@ -50,8 +54,10 @@ public class generateGVC {
             PersistStore ps = new PersistStore();
             ps.wirteToFile("GroupCredential","GroupCredential",gvc.toJson().getBytes());
             System.out.println(gvc);
-
+            Message message = new Message(0,"storeGroupGCS-VC",gvc.toJson().getBytes());
+            transportService.sendstoreGroupGCSGVC(message);
         }
+
     }
 
 

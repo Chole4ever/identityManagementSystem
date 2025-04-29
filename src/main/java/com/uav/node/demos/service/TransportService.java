@@ -72,4 +72,11 @@ public class TransportService {
         }
     }
 
+
+    public void sendstoreGroupGCSGVC(Message message) throws Exception {
+        for(int i=1;i<config.getCount();i++)
+        {
+            sendUDPMessage(message,i);
+        }
+    }
 }
