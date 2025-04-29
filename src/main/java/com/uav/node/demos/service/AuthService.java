@@ -186,7 +186,10 @@ public class AuthService {
 
     public void sendGVCToStore(byte[] gvcBytes) throws Exception {
         Message message = new Message(config.getOwnerId(),"storeGVC",gvcBytes);
-        transportService.sendBroadcastMessage(message);
+        for(int i=1;i<config.getCount();i++)
+        {
+            transportService.sendUDPMessage(message,i);
+        }
     }
 
 }

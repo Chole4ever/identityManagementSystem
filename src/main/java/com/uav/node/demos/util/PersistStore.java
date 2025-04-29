@@ -26,6 +26,10 @@ public class PersistStore {
         try (Reader reader = Files.newBufferedReader(Paths.get(filePath))) {
             Map<String, byte[]> data = new ObjectMapper().readValue(reader, new TypeReference<Map<String, byte[]>>() {});
             return data.get(key);
+        }catch (IOException ioException)
+        {
+            logger.info("Not exist");
+            return null;
         }
     }
 

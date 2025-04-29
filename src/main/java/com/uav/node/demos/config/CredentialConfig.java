@@ -28,14 +28,21 @@ public class CredentialConfig {
     public CredentialConfig() throws Exception {
         PersistStore persistStore = new PersistStore();
         byte[] m = persistStore.loadFromFile("./keystore/leaderCredential.json","leaderCredential");
-        Credential credential = JsonBytesConverter.fromBytes(m,Credential.class);
-        this.credentials = new ArrayList<>();
-        this.credentials.add(credential);
+        if(m!=null)
+        {
+            Credential credential = JsonBytesConverter.fromBytes(m,Credential.class);
+            this.credentials = new ArrayList<>();
+            this.credentials.add(credential);
+        }
 
         byte[] x = persistStore.loadFromFile("./keystore/GroupCredential.json","GroupCredential");
-        Credential credential2 = JsonBytesConverter.fromBytes(x,Credential.class);
-        this.groupCredentials = new ArrayList<>();
-        this.groupCredentials.add(credential2);
+        if(x!=null)
+        {
+            Credential credential2 = JsonBytesConverter.fromBytes(x,Credential.class);
+            this.groupCredentials = new ArrayList<>();
+            this.groupCredentials.add(credential2);
+        }
+
 
     }
 }

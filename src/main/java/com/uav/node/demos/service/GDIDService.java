@@ -82,8 +82,7 @@ public class GDIDService {
         byte[] aggbytes = new byte[97];
         agg.toBytes(aggbytes,false);
         List<String> serverList = new ArrayList<>();
-        serverList.add("Agriculture");serverList.add("Logistics");serverList.add("Environmental Monitoring");
-
+        serverList.add("Agriculture");serverList.add("Logistics");serverList.add("Environmental Monitoring ");
         smartContractService.registerGDID(config.getGdid(),pkbytes,serverList,didLists,aggbytes);
     }
 
