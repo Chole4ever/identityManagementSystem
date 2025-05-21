@@ -3,7 +3,7 @@
 ### Features:
 
 - **DID Registration**: The system supports decentralized identifier (DID) registration.  
-- **GDID (Group DID) Registration**: Enables group DID registration, which involves group key negotiation among selected members and uploads the Group DID Object (GDDO) to the blockchain.  
+- **GDID (Group DID) Registration**: Enables GDID(group DID) registration, which involves group key negotiation among selected members and uploads the GDDO(Group DID Docuement) to the blockchain.  
 - **Group Key Generation**: Supports group key generation through a combination of BLS (Boneh-Lynn-Shacham) and DKG (Distributed Key Generation).  
 - **Group Authentication**: Facilitates group authentication using GDID.  
 
