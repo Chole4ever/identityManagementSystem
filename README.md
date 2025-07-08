@@ -1,4 +1,4 @@
-## A Delicate Identity Management System Built in Java and Solidity
+## Decentralized Identity Management System Built in Java and Solidity
 
 ### Features:
 
